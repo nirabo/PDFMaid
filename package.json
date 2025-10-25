@@ -1,0 +1,54 @@
+{
+  "name": "pdfmaid",
+  "version": "1.0.0",
+  "description": "PDFMaid - Your Markdown to PDF/HTML converter with beautiful Mermaid diagram rendering",
+  "main": "lib/index.js",
+  "bin": {
+    "pdfmaid": "./bin/pdfmaid.js",
+    "md-to-html": "./bin/md-to-html.js",
+    "html-to-pdf": "./bin/html-to-pdf.js",
+    "md-to-pdf": "./bin/md-to-pdf.js"
+  },
+  "scripts": {
+    "test": "node test/test.js"
+  },
+  "keywords": [
+    "pdfmaid",
+    "markdown",
+    "pdf",
+    "html",
+    "mermaid",
+    "diagrams",
+    "converter",
+    "documentation",
+    "flowchart",
+    "sequence-diagram",
+    "gantt",
+    "cli",
+    "markdown-to-pdf"
+  ],
+  "author": "Lyuboslav Petrov <petrov.lyuboslav@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lpetrov/pdfmaid.git"
+  },
+  "bugs": {
+    "url": "https://github.com/lpetrov/pdfmaid/issues"
+  },
+  "homepage": "https://github.com/lpetrov/pdfmaid#readme",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "dependencies": {
+    "marked": "^12.0.0"
+  },
+  "devDependencies": {},
+  "peerDependencies": {},
+  "files": [
+    "lib/",
+    "bin/",
+    "README.md",
+    "LICENSE"
+  ]
+}

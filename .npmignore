@@ -1,0 +1,45 @@
+# Test files
+test/
+*.test.js
+*.spec.js
+
+# Documentation source
+docs/
+
+# Development files
+.github/
+.vscode/
+.idea/
+
+# Build scripts
+scripts/
+
+# Examples
+examples/
+
+# Test outputs
+*.test.html
+*.test.pdf
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+*.swp
+*.swo
+*~
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# CI/CD
+.travis.yml
+.circleci/
+.github/
+
+# Misc
+TODO.md
+CONTRIBUTING.md
