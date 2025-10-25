@@ -31,12 +31,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/lpetrov/pdfmaid.git"
+    "url": "https://github.com/nirabo/pdfmaid.git"
   },
   "bugs": {
-    "url": "https://github.com/lpetrov/pdfmaid/issues"
+    "url": "https://github.com/nirabo/pdfmaid/issues"
   },
-  "homepage": "https://github.com/lpetrov/pdfmaid#readme",
+  "homepage": "https://github.com/nirabo/pdfmaid#readme",
   "engines": {
     "node": ">=14.0.0"
   },

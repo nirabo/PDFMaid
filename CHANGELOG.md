@@ -45,7 +45,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Package name: `md-mermaid-pdf` → `pdfmaid`
 - Main command: `md-to-pdf` → `pdfmaid` (with `-o` flag for format selection)
-- Repository: https://github.com/lpetrov/pdfmaid
+- Repository: https://github.com/nirabo/pdfmaid
 - Author: Lyuboslav Petrov <petrov.lyuboslav@gmail.com>
 
-[1.0.0]: https://github.com/lpetrov/pdfmaid/releases/tag/v1.0.0
+[1.0.0]: https://github.com/nirabo/pdfmaid/releases/tag/v1.0.0

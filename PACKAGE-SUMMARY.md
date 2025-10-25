@@ -80,7 +80,7 @@ Before publishing, update these in `package.json`:
 {
   "author": "Lyuboslav Petrov <petrov.lyuboslav@gmail.com>",
   "repository": {
-    "url": "https://github.com/lpetrov/pdfmaid.git"
+    "url": "https://github.com/nirabo/pdfmaid.git"
   }
 }
 ```
@@ -113,7 +113,7 @@ git add .
 git commit -m "Initial commit: PDFMaid v1.0.0"
 
 # Create repository on GitHub, then:
-git remote add origin https://github.com/lpetrov/pdfmaid.git
+git remote add origin https://github.com/nirabo/pdfmaid.git
 git branch -M main
 git push -u origin main
 
@@ -133,7 +133,7 @@ If `pdfmaid` is taken on npm, try:
 - `pdf-maid`
 - `pdfmaid-cli`
 - `markdown-mermaid-pdf`
-- `@lpetrov/pdfmaid` (scoped)
+- `@nirabo/pdfmaid` (scoped)
 
 Check availability: `npm search <package-name>`
 

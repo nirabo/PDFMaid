@@ -421,9 +421,9 @@ MIT © Lyuboslav Petrov
 
 ## 🔗 Links
 
-- [GitHub Repository](https://github.com/lpetrov/pdfmaid)
+- [GitHub Repository](https://github.com/nirabo/pdfmaid)
 - [npm Package](https://www.npmjs.com/package/pdfmaid)
-- [Issue Tracker](https://github.com/lpetrov/pdfmaid/issues)
+- [Issue Tracker](https://github.com/nirabo/pdfmaid/issues)
 - [Mermaid Documentation](https://mermaid.js.org/)
 
 ---

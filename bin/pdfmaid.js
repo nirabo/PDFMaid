@@ -284,7 +284,7 @@ REQUIREMENTS:
   • Node.js >= 14.0.0
   • Google Chrome or Chromium (for PDF generation)
 
-For more information, visit: https://github.com/lpetrov/pdfmaid
+For more information, visit: https://github.com/nirabo/pdfmaid
 `);
 }
 
