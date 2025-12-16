@@ -32,7 +32,8 @@ const mdOptions = {
   title: null,
   theme: 'default',
   includeStyles: true,
-  includePrintButton: true
+  includePrintButton: true,
+  compactness: 'normal'
 };
 
 const pdfOptions = {
@@ -68,6 +69,18 @@ for (let i = 0; i < args.length; i++) {
     mdOptions.title = args[++i];
   } else if (arg === '--theme') {
     mdOptions.theme = args[++i];
+  } else if (arg === '--compact' || arg === '-c') {
+    mdOptions.compactness = 'compact';
+  } else if (arg === '--spacious') {
+    mdOptions.compactness = 'spacious';
+  } else if (arg === '--compactness') {
+    const level = args[++i];
+    if (['compact', 'normal', 'spacious'].includes(level)) {
+      mdOptions.compactness = level;
+    } else {
+      console.error(`Error: Invalid compactness level '${level}'. Use 'compact', 'normal', or 'spacious'.`);
+      process.exit(1);
+    }
   } else if (arg === '--wait' || arg === '-w') {
     pdfOptions.waitTime = parseInt(args[++i], 10);
   } else if (arg === '--landscape') {
@@ -231,6 +244,14 @@ OPTIONS:
 
   --theme <name>    Theme: 'default' or 'dark' (default: 'default')
 
+  -c, --compact     Use compact layout (less spacing, tighter margins)
+
+  --spacious        Use spacious layout (more spacing, larger margins)
+
+  --compactness <level>
+                    Set layout density: 'compact', 'normal', or 'spacious'
+                    (default: 'normal')
+
   -w, --wait <ms>   Wait time for Mermaid rendering in ms (default: 2000)
                     Increase for complex diagrams
 
@@ -258,6 +279,12 @@ EXAMPLES:
 
   # Custom title and dark theme
   pdfmaid document.md -t "API Docs" --theme dark
+
+  # Compact layout for denser output
+  pdfmaid document.md --compact
+
+  # Spacious layout for more breathing room
+  pdfmaid document.md --spacious
 
   # Complex diagrams with extra wait time
   pdfmaid architecture.md -w 5000
