@@ -35,20 +35,10 @@ describe('CLI End-to-End Tests', () => {
     fs.writeFileSync(inputFile, '# Hello World');
     const outputFile = path.join(tempDir, 'test.pdf');
 
-    // In a CI environment, Chrome might not be available.
-    // This test ensures the CLI command for PDF generation is correctly formed
-    // and doesn't crash, even if PDF generation itself fails.
-    try {
-      execSync(
-        `node ${cliPath} ${inputFile} -o ${outputFile} --chrome /fake/chrome`,
-      );
-    } catch (error) {
-      // We expect an error because /fake/chrome is not a real executable.
-      // The important part is that the CLI tried to execute it.
-      expect(error.stderr.toString()).toContain(
-        'Failed to generate PDF',
-      );
-    }
+    // This test now expects the PDF to be created successfully.
+    execSync(`node ${cliPath} ${inputFile} -o ${outputFile}`);
+
+    expect(fs.existsSync(outputFile)).toBe(true);
   });
 
   it('should convert a markdown file to HTML with -o html', () => {
@@ -56,9 +46,7 @@ describe('CLI End-to-End Tests', () => {
     fs.writeFileSync(inputFile, '# Hello HTML');
     const outputFile = path.join(tempDir, 'test.html');
 
-    execSync(
-      `node ${cliPath} ${inputFile} -o ${outputFile} --chrome /fake/chrome`,
-    );
+    execSync(`node ${cliPath} ${inputFile} -o ${outputFile}`);
 
     expect(fs.existsSync(outputFile)).toBe(true);
     const content = fs.readFileSync(outputFile, 'utf8');
@@ -71,7 +59,7 @@ describe('CLI End-to-End Tests', () => {
     const outputFile = path.join(tempDir, 'test.html');
 
     execSync(
-      `node ${cliPath} ${inputFile} -o ${outputFile} -t "My Custom Title" --chrome /fake/chrome`,
+      `node ${cliPath} ${inputFile} -o ${outputFile} -t "My Custom Title"`,
     );
 
     const content = fs.readFileSync(outputFile, 'utf8');
@@ -83,9 +71,7 @@ describe('CLI End-to-End Tests', () => {
     fs.writeFileSync(inputFile, '# Content');
     const outputFile = path.join(tempDir, 'test.html');
 
-    execSync(
-      `node ${cliPath} ${inputFile} -o ${outputFile} --theme dark --chrome /fake/chrome`,
-    );
+    execSync(`node ${cliPath} ${inputFile} -o ${outputFile} --theme dark`);
 
     const content = fs.readFileSync(outputFile, 'utf8');
     expect(content).toContain("theme: 'dark'");
@@ -96,10 +82,7 @@ describe('CLI End-to-End Tests', () => {
     fs.writeFileSync(inputFile, '# Content');
     const outputFile = path.join(tempDir, 'test.html');
 
-    // Mock chrome path to avoid the check
-    execSync(
-      `node ${cliPath} ${inputFile} -o ${outputFile} --compact -4 --chrome /fake/chrome`,
-    );
+    execSync(`node ${cliPath} ${inputFile} -o ${outputFile} --compact -4`);
 
     const content = fs.readFileSync(outputFile, 'utf8');
     // Check for a style that is affected by the compactness level.
