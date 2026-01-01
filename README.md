@@ -97,12 +97,12 @@ const { convertMarkdownFile, htmlToPdf } = require('pdfmaid');
 // Convert Markdown to HTML
 convertMarkdownFile('input.md', 'output.html', {
   title: 'My Document',
-  theme: 'dark'
+  theme: 'dark',
 });
 
 // Convert HTML to PDF
 htmlToPdf('output.html', 'output.pdf', {
-  waitTime: 2000
+  waitTime: 2000,
 });
 ```
 
@@ -120,19 +120,19 @@ pdfmaid <input> [options]
 
 ### Options
 
-| Option | Description | Default |
-|--------|-------------|---------|
-| `-o, --output <format\|file>` | Output format ('pdf' or 'html') or file path | pdf |
-| `-f, --format <format>` | Output format ('pdf' or 'html') | pdf |
-| `-t, --title <text>` | Set document title | derived from filename |
-| `--theme <name>` | Theme: 'default' or 'dark' | default |
-| `-w, --wait <ms>` | Wait time for Mermaid rendering | 2000 |
-| `--landscape` | Use landscape orientation for PDF | false |
-| `--keep-html` | Keep intermediate HTML file | false |
-| `--no-interactive` | Disable interactive features | false |
-| `--chrome <path>` | Path to Chrome/Chromium executable | auto-detect |
-| `-h, --help` | Show help message | - |
-| `-v, --version` | Show version number | - |
+| Option                        | Description                                  | Default               |
+| ----------------------------- | -------------------------------------------- | --------------------- |
+| `-o, --output <format\|file>` | Output format ('pdf' or 'html') or file path | pdf                   |
+| `-f, --format <format>`       | Output format ('pdf' or 'html')              | pdf                   |
+| `-t, --title <text>`          | Set document title                           | derived from filename |
+| `--theme <name>`              | Theme: 'default' or 'dark'                   | default               |
+| `-w, --wait <ms>`             | Wait time for Mermaid rendering              | 2000                  |
+| `--landscape`                 | Use landscape orientation for PDF            | false                 |
+| `--keep-html`                 | Keep intermediate HTML file                  | false                 |
+| `--no-interactive`            | Disable interactive features                 | false                 |
+| `--chrome <path>`             | Path to Chrome/Chromium executable           | auto-detect           |
+| `-h, --help`                  | Show help message                            | -                     |
+| `-v, --version`               | Show version number                          | -                     |
 
 ### Examples
 
@@ -199,6 +199,7 @@ pdfmaid input.md -o /path/to/output.pdf
 Convert Markdown string to HTML string.
 
 **Parameters:**
+
 - `markdown` (string): Markdown content
 - `options` (object):
   - `title` (string): Document title
@@ -208,20 +209,21 @@ Convert Markdown string to HTML string.
 
 **Returns:** HTML string
 
-```javascript
+````javascript
 const { markdownToHtml } = require('pdfmaid');
 
 const html = markdownToHtml('# Hello\n\n```mermaid\ngraph TD\nA-->B\n```', {
   title: 'My Document',
-  theme: 'default'
+  theme: 'default',
 });
-```
+````
 
 ### `convertMarkdownFile(inputPath, outputPath, options)`
 
 Convert Markdown file to HTML file.
 
 **Parameters:**
+
 - `inputPath` (string): Path to input .md file
 - `outputPath` (string): Path to output .html file
 - `options` (object): Same as `markdownToHtml`
@@ -233,7 +235,7 @@ const { convertMarkdownFile } = require('pdfmaid');
 
 convertMarkdownFile('input.md', 'output.html', {
   title: 'My Document',
-  theme: 'dark'
+  theme: 'dark',
 });
 ```
 
@@ -242,6 +244,7 @@ convertMarkdownFile('input.md', 'output.html', {
 Convert HTML file to PDF.
 
 **Parameters:**
+
 - `inputPath` (string): Path to input .html file
 - `outputPath` (string): Path to output .pdf file
 - `options` (object):
@@ -256,7 +259,7 @@ const { htmlToPdf } = require('pdfmaid');
 
 htmlToPdf('input.html', 'output.pdf', {
   waitTime: 3000,
-  landscape: false
+  landscape: false,
 });
 ```
 
@@ -278,6 +281,7 @@ console.log(chromePath); // e.g., '/usr/bin/google-chrome'
 ### GitHub Flavored Markdown (GFM)
 
 Full support for:
+
 - Tables
 - Task lists
 - Strikethrough
@@ -343,6 +347,7 @@ pdfmaid document.md --theme dark
 If you get a "Chrome not found" error:
 
 1. **Install Chrome or Chromium:**
+
    ```bash
    # Ubuntu/Debian
    sudo apt install chromium-browser
@@ -355,6 +360,7 @@ If you get a "Chrome not found" error:
    ```
 
 2. **Or set CHROME_PATH:**
+
    ```bash
    export CHROME_PATH=/path/to/chrome
    pdfmaid document.md
@@ -370,6 +376,7 @@ If you get a "Chrome not found" error:
 If diagrams appear as code instead of rendered:
 
 1. **Increase wait time:**
+
    ```bash
    pdfmaid document.md -w 5000
    ```

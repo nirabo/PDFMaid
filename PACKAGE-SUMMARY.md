@@ -33,18 +33,21 @@ pdfmaid/
 ## ✨ Features
 
 ### CLI Tools
+
 - ✅ `pdfmaid` - **Main unified CLI** - All conversion modes via -o flag
 - ✅ `md-to-html` - Legacy: Convert Markdown to HTML with Mermaid diagrams
 - ✅ `html-to-pdf` - Legacy: Convert HTML to PDF with rendered diagrams
 - ✅ `md-to-pdf` - Legacy: One-step Markdown to PDF conversion
 
 ### API
+
 - ✅ `markdownToHtml()` - Convert markdown string to HTML
 - ✅ `convertMarkdownFile()` - Convert markdown file to HTML file
 - ✅ `htmlToPdf()` - Convert HTML file to PDF
 - ✅ `findChrome()` - Locate Chrome/Chromium executable
 
 ### Mermaid Support
+
 - ✅ Flowcharts
 - ✅ Sequence diagrams
 - ✅ Class diagrams
@@ -54,6 +57,7 @@ pdfmaid/
 - ✅ All Mermaid diagram types
 
 ### Styling
+
 - ✅ Professional light theme
 - ✅ Dark mode support
 - ✅ Syntax highlighting for code

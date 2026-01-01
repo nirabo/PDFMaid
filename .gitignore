@@ -5,6 +5,7 @@ yarn.lock
 pnpm-lock.yaml
 
 # Test outputs
+coverage/
 test/*.html
 test/*.pdf
 *.test.html

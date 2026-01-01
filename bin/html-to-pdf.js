@@ -47,7 +47,7 @@ let outputFile = null;
 const options = {
   waitTime: 2000,
   landscape: false,
-  chromePath: null
+  chromePath: null,
 };
 
 // Parse arguments
@@ -108,6 +108,8 @@ try {
 } catch (error) {
   console.error('❌ Error:', error.message);
   console.error('');
-  console.error('Alternative: Open the HTML file in your browser and use Print → Save as PDF');
+  console.error(
+    'Alternative: Open the HTML file in your browser and use Print → Save as PDF',
+  );
   process.exit(1);
 }

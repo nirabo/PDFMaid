@@ -46,7 +46,7 @@ const options = {
   title: null,
   theme: 'default',
   includeStyles: true,
-  includePrintButton: true
+  includePrintButton: true,
 };
 
 // Parse arguments
@@ -82,7 +82,9 @@ try {
   console.log(`   Input:  ${inputFile}`);
   console.log(`   Output: ${result}`);
   console.log('');
-  console.log('💡 Open the HTML file in your browser or use "html-to-pdf" to create a PDF');
+  console.log(
+    '💡 Open the HTML file in your browser or use "html-to-pdf" to create a PDF',
+  );
 } catch (error) {
   console.error('❌ Error:', error.message);
   process.exit(1);

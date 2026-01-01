@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const { convertMarkdownFile, htmlToPdf, findChrome } = require('../lib');
+const { convertMarkdownFile, htmlToPdf, findChrome } = require('../lib/index.js');
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
@@ -27,19 +27,20 @@ let inputFile = null;
 let outputFile = null;
 let outputFormat = 'pdf'; // default
 let keepHtml = false;
+let formatExplicitlySet = false;
 
 const mdOptions = {
   title: null,
   theme: 'default',
   includeStyles: true,
   includePrintButton: true,
-  compactness: 'normal'
+  compactLevel: 0,
 };
 
 const pdfOptions = {
   waitTime: 2000,
   landscape: false,
-  chromePath: null
+  chromePath: null,
 };
 
 // Parse all arguments
@@ -50,8 +51,13 @@ for (let i = 0; i < args.length; i++) {
     const nextArg = args[i + 1];
     if (nextArg === 'pdf' || nextArg === 'html') {
       outputFormat = nextArg;
+      formatExplicitlySet = true;
       i++;
-    } else if (nextArg && !nextArg.startsWith('--') && !nextArg.startsWith('-')) {
+    } else if (
+      nextArg &&
+      !nextArg.startsWith('--') &&
+      !nextArg.startsWith('-')
+    ) {
       // It's a file path
       outputFile = nextArg;
       i++;
@@ -60,6 +66,7 @@ for (let i = 0; i < args.length; i++) {
     const format = args[i + 1];
     if (format === 'pdf' || format === 'html') {
       outputFormat = format;
+      formatExplicitlySet = true;
       i++;
     } else {
       console.error(`Error: Invalid format '${format}'. Use 'pdf' or 'html'.`);
@@ -70,17 +77,14 @@ for (let i = 0; i < args.length; i++) {
   } else if (arg === '--theme') {
     mdOptions.theme = args[++i];
   } else if (arg === '--compact' || arg === '-c') {
-    mdOptions.compactness = 'compact';
-  } else if (arg === '--spacious') {
-    mdOptions.compactness = 'spacious';
-  } else if (arg === '--compactness') {
-    const level = args[++i];
-    if (['compact', 'normal', 'spacious'].includes(level)) {
-      mdOptions.compactness = level;
-    } else {
-      console.error(`Error: Invalid compactness level '${level}'. Use 'compact', 'normal', or 'spacious'.`);
+    const level = parseInt(args[++i], 10);
+    if (Number.isNaN(level) || level < -5 || level > 5) {
+      console.error(
+        `Error: Invalid compact level '${args[i]}'. Must be an integer between -5 and 5.`,
+      );
       process.exit(1);
     }
+    mdOptions.compactLevel = level;
   } else if (arg === '--wait' || arg === '-w') {
     pdfOptions.waitTime = parseInt(args[++i], 10);
   } else if (arg === '--landscape') {
@@ -126,11 +130,23 @@ if (!isMarkdown && !isHtml) {
 // Determine output file if not specified
 if (!outputFile) {
   const baseName = path.basename(inputFile, path.extname(inputFile));
-  outputFile = path.join(path.dirname(inputFile), `${baseName}.${outputFormat}`);
+  outputFile = path.join(
+    path.dirname(inputFile),
+    `${baseName}.${outputFormat}`,
+  );
+}
+
+// Infer output format from output file extension if not explicitly set
+const outputExt = path.extname(outputFile).toLowerCase();
+if (!formatExplicitlySet) {
+  if (['.html', '.htm'].includes(outputExt)) {
+    outputFormat = 'html';
+  } else if (['.pdf'].includes(outputExt)) {
+    outputFormat = 'pdf';
+  }
 }
 
 // Ensure output has correct extension
-const outputExt = path.extname(outputFile).toLowerCase();
 if (outputFormat === 'pdf' && !['.pdf'].includes(outputExt)) {
   outputFile += '.pdf';
 } else if (outputFormat === 'html' && !['.html', '.htm'].includes(outputExt)) {
@@ -152,7 +168,6 @@ try {
     console.log('');
     console.log('✅ Conversion complete!');
     console.log(`   Location: ${outputFile}`);
-
   } else if (isMarkdown && outputFormat === 'pdf') {
     // Markdown → PDF (two-step)
     mdOptions.includePrintButton = false; // No print button in PDF
@@ -190,7 +205,6 @@ try {
     if (keepHtml) {
       console.log(`   📄 HTML file saved: ${tempHtmlFile}`);
     }
-
   } else if (isHtml && outputFormat === 'pdf') {
     // HTML → PDF
     if (!pdfOptions.chromePath) {
@@ -208,12 +222,10 @@ try {
     console.log('✅ Conversion complete!');
     console.log(`   Location: ${outputFile}`);
     console.log('   📊 Mermaid diagrams have been rendered');
-
   } else if (isHtml && outputFormat === 'html') {
     console.error('Error: Cannot convert HTML to HTML. Input is already HTML.');
     process.exit(1);
   }
-
 } catch (error) {
   console.error('❌ Error:', error.message);
   process.exit(1);
@@ -244,13 +256,9 @@ OPTIONS:
 
   --theme <name>    Theme: 'default' or 'dark' (default: 'default')
 
-  -c, --compact     Use compact layout (less spacing, tighter margins)
-
-  --spacious        Use spacious layout (more spacing, larger margins)
-
-  --compactness <level>
-                    Set layout density: 'compact', 'normal', or 'spacious'
-                    (default: 'normal')
+  -c, --compact <level>
+                    Set compactness level from -5 (most compact) to 5 (most spacious).
+                    Default: 0
 
   -w, --wait <ms>   Wait time for Mermaid rendering in ms (default: 2000)
                     Increase for complex diagrams
@@ -280,11 +288,11 @@ EXAMPLES:
   # Custom title and dark theme
   pdfmaid document.md -t "API Docs" --theme dark
 
-  # Compact layout for denser output
-  pdfmaid document.md --compact
+  # Make the layout more compact
+  pdfmaid document.md --compact -3
 
-  # Spacious layout for more breathing room
-  pdfmaid document.md --spacious
+  # Make the layout more spacious
+  pdfmaid document.md --compact 3
 
   # Complex diagrams with extra wait time
   pdfmaid architecture.md -w 5000

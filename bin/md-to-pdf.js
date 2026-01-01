@@ -54,13 +54,13 @@ const mdOptions = {
   title: null,
   theme: 'default',
   includeStyles: true,
-  includePrintButton: false // No need for print button in PDF
+  includePrintButton: false, // No need for print button in PDF
 };
 
 const pdfOptions = {
   waitTime: 2000,
   landscape: false,
-  chromePath: null
+  chromePath: null,
 };
 
 // Parse arguments

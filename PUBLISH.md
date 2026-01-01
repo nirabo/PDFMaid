@@ -153,6 +153,7 @@ npm version major
 ```
 
 This will:
+
 - Update `package.json`
 - Create a git commit
 - Create a git tag
@@ -262,5 +263,6 @@ After publishing, update README.md with actual badges:
 ## Support
 
 For issues or questions:
+
 - GitHub Issues: https://github.com/yourusername/md-mermaid-pdf/issues
 - npm: https://www.npmjs.com/package/md-mermaid-pdf

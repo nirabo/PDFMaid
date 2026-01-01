@@ -91,23 +91,23 @@ describe('converter', () => {
       expect(html).not.toContain('class="print-button"');
     });
 
-    it('should support compact compactness', () => {
+    it('should support negative compactLevel for more compact layouts', () => {
       const markdown = '# Test';
-      const html = markdownToHtml(markdown, { compactness: 'compact' });
+      const html = markdownToHtml(markdown, { compactLevel: -5 });
 
       expect(html).toContain('line-height: 1.3');
     });
 
-    it('should support normal compactness', () => {
+    it('should support default compactLevel (0) for normal layout', () => {
       const markdown = '# Test';
-      const html = markdownToHtml(markdown, { compactness: 'normal' });
+      const html = markdownToHtml(markdown, { compactLevel: 0 });
 
       expect(html).toContain('line-height: 1.6');
     });
 
-    it('should support spacious compactness', () => {
+    it('should support positive compactLevel for more spacious layouts', () => {
       const markdown = '# Test';
-      const html = markdownToHtml(markdown, { compactness: 'spacious' });
+      const html = markdownToHtml(markdown, { compactLevel: 5 });
 
       expect(html).toContain('line-height: 1.9');
     });
@@ -156,7 +156,9 @@ describe('converter', () => {
 
     it('should escape HTML in title', () => {
       const markdown = '# Test';
-      const html = markdownToHtml(markdown, { title: '<script>alert("xss")</script>' });
+      const html = markdownToHtml(markdown, {
+        title: '<script>alert("xss")</script>',
+      });
 
       expect(html).not.toContain('<script>alert');
       expect(html).toContain('&lt;script&gt;');
@@ -229,7 +231,7 @@ describe('converter', () => {
 
       convertMarkdownFile(inputFile, outputFile, {
         theme: 'dark',
-        compactness: 'compact'
+        compactLevel: -5,
       });
 
       const content = fs.readFileSync(outputFile, 'utf8');

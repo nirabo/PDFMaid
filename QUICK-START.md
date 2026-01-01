@@ -56,12 +56,12 @@ const { convertMarkdownFile, htmlToPdf } = require('md-mermaid-pdf');
 // Markdown to HTML
 convertMarkdownFile('input.md', 'output.html', {
   title: 'My Document',
-  theme: 'dark'
+  theme: 'dark',
 });
 
 // HTML to PDF
 htmlToPdf('output.html', 'output.pdf', {
-  waitTime: 2000
+  waitTime: 2000,
 });
 ```
 
