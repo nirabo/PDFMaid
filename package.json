@@ -22,10 +22,16 @@
       "**/test/**/*.test.js"
     ],
     "collectCoverageFrom": [
-      "lib/**/*.js"
+      "lib/**/*.js",
+      "!lib/index.js"
     ],
     "coverageDirectory": "coverage",
-    "verbose": true
+    "verbose": true,
+    "coverageThreshold": {
+      "global": {
+        "statements": 95
+      }
+    }
   },
   "keywords": [
     "pdfmaid",

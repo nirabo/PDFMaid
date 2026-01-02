@@ -138,5 +138,19 @@ describe('pdf-generator', () => {
       pdfGenerator.htmlToPdf(inputPath, outputPath, { landscape: true });
       expect(execSync.mock.calls[0][0]).toContain('--landscape');
     });
+
+    it('should include margin options in command when specified', () => {
+      execSync.mockImplementation(() => {});
+      fs.existsSync.mockImplementation((p) => {
+        const resolvedP = path.resolve(p);
+        return (
+          resolvedP === path.resolve(inputPath) ||
+          resolvedP === path.resolve(outputPath)
+        );
+      });
+
+      pdfGenerator.htmlToPdf(inputPath, outputPath, { marginTop: '1cm' });
+      expect(execSync.mock.calls[0][0]).toContain('--print-to-pdf-no-header');
+    });
   });
 });
