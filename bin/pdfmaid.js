@@ -1,11 +1,119 @@
 #!/usr/bin/env node
 
-const { convertMarkdownFile, htmlToPdf, findChrome } = require('../lib/index.js');
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
+const { convertMarkdownFile, htmlToPdf, findChrome } = require('../lib');
 
 const VERSION = '1.0.0';
+
+// Helper functions must be defined before they are called.
+function showHelp() {
+  console.log(`
+🧹 PDFMaid v${VERSION}
+Your Markdown to PDF/HTML converter with beautiful Mermaid diagram support
+
+USAGE:
+  pdfmaid <input> [options]
+
+ARGUMENTS:
+  <input>           Input file (.md, .markdown, .html, .htm)
+
+OPTIONS:
+  -o, --output <format|file>
+                    Output format ('pdf' or 'html') or output file path
+                    Default: pdf
+
+  -f, --format <format>
+                    Output format ('pdf' or 'html')
+
+  -t, --title <text>
+                    Set document title (default: derived from filename)
+
+  --theme <name>    Theme: 'default' or 'dark' (default: 'default')
+
+  -c, --compact <level>
+                    Set compactness level from -5 (most compact) to 5 (most spacious).
+                    Default: 0
+
+  -w, --wait <ms>   Wait time for Mermaid rendering in ms (default: 2000)
+                    Increase for complex diagrams
+
+  --landscape       Use landscape orientation for PDF
+
+  --keep-html       Keep intermediate HTML file (for md→pdf conversion)
+
+  --no-interactive  Disable interactive features (print/copy buttons)
+
+  --chrome <path>   Path to Chrome/Chromium executable
+
+  -h, --help        Show this help message
+
+  -v, --version     Show version number
+
+EXAMPLES:
+  # Convert Markdown to PDF (default)
+  pdfmaid document.md
+
+  # Convert Markdown to HTML
+  pdfmaid document.md -o html
+
+  # Specify output file
+  pdfmaid document.md -o report.pdf
+
+  # Custom title and dark theme
+  pdfmaid document.md -t "API Docs" --theme dark
+
+  # Make the layout more compact
+  pdfmaid document.md --compact -3
+
+  # Make the layout more spacious
+  pdfmaid document.md --compact 3
+
+  # Complex diagrams with extra wait time
+  pdfmaid architecture.md -w 5000
+
+  # Keep HTML for debugging
+  pdfmaid document.md --keep-html
+
+  # Convert HTML to PDF
+  pdfmaid document.html -o pdf
+
+  # Landscape PDF
+  pdfmaid slides.md --landscape
+
+SUPPORTED FEATURES:
+  ✓ Full Mermaid.js diagram support (flowcharts, sequence, gantt, etc.)
+  ✓ GitHub Flavored Markdown (GFM)
+  ✓ Syntax-highlighted code blocks
+  ✓ Dark and light themes
+  ✓ Professional typography
+  ✓ Print-optimized PDF output
+  ✓ Interactive HTML features
+
+REQUIREMENTS:
+  • Node.js >= 14.0.0
+  • Google Chrome or Chromium (for PDF generation)
+
+For more information, visit: https://github.com/nirabo/pdfmaid
+`);
+}
+
+function showChromeError() {
+  console.error('❌ Error: Chrome/Chromium not found');
+  console.error('');
+  console.error('Please install Google Chrome or Chromium:');
+  console.error('  • Ubuntu/Debian: sudo apt install chromium-browser');
+  console.error('  • Fedora: sudo dnf install chromium');
+  console.error('  • macOS: brew install --cask google-chrome');
+  console.error('  • Or download from: https://www.google.com/chrome/');
+  console.error('');
+  console.error('Alternatively, set CHROME_PATH environment variable:');
+  console.error('  export CHROME_PATH=/path/to/chrome');
+  console.error('');
+  console.error('Or use --chrome flag:');
+  console.error('  pdfmaid document.md --chrome /path/to/chrome');
+}
 
 // Parse arguments
 const args = process.argv.slice(2);
@@ -44,7 +152,7 @@ const pdfOptions = {
 };
 
 // Parse all arguments
-for (let i = 0; i < args.length; i++) {
+for (let i = 0; i < args.length; i += 1) {
   const arg = args[i];
 
   if (arg === '--output' || arg === '-o') {
@@ -52,7 +160,7 @@ for (let i = 0; i < args.length; i++) {
     if (nextArg === 'pdf' || nextArg === 'html') {
       outputFormat = nextArg;
       formatExplicitlySet = true;
-      i++;
+      i += 1;
     } else if (
       nextArg &&
       !nextArg.startsWith('--') &&
@@ -60,33 +168,39 @@ for (let i = 0; i < args.length; i++) {
     ) {
       // It's a file path
       outputFile = nextArg;
-      i++;
+      i += 1;
     }
   } else if (arg === '--format' || arg === '-f') {
     const format = args[i + 1];
     if (format === 'pdf' || format === 'html') {
       outputFormat = format;
       formatExplicitlySet = true;
-      i++;
+      i += 1;
     } else {
       console.error(`Error: Invalid format '${format}'. Use 'pdf' or 'html'.`);
       process.exit(1);
     }
   } else if (arg === '--title' || arg === '-t') {
-    mdOptions.title = args[++i];
+    mdOptions.title = args[i + 1];
+    i += 1;
   } else if (arg === '--theme') {
-    mdOptions.theme = args[++i];
+    mdOptions.theme = args[i + 1];
+    i += 1;
   } else if (arg === '--compact' || arg === '-c') {
-    const level = parseInt(args[++i], 10);
+    const level = parseInt(args[i + 1], 10);
     if (Number.isNaN(level) || level < -5 || level > 5) {
       console.error(
-        `Error: Invalid compact level '${args[i]}'. Must be an integer between -5 and 5.`,
+        `Error: Invalid compact level '${
+          args[i + 1]
+        }'. Must be an integer between -5 and 5.`,
       );
       process.exit(1);
     }
     mdOptions.compactLevel = level;
+    i += 1;
   } else if (arg === '--wait' || arg === '-w') {
-    pdfOptions.waitTime = parseInt(args[++i], 10);
+    pdfOptions.waitTime = parseInt(args[i + 1], 10);
+    i += 1;
   } else if (arg === '--landscape') {
     pdfOptions.landscape = true;
   } else if (arg === '--keep-html') {
@@ -94,7 +208,8 @@ for (let i = 0; i < args.length; i++) {
   } else if (arg === '--no-interactive') {
     mdOptions.includePrintButton = false;
   } else if (arg === '--chrome') {
-    pdfOptions.chromePath = args[++i];
+    pdfOptions.chromePath = args[i + 1];
+    i += 1;
   } else if (!arg.startsWith('--') && !arg.startsWith('-')) {
     if (!inputFile) {
       inputFile = arg;
@@ -229,112 +344,4 @@ try {
 } catch (error) {
   console.error('❌ Error:', error.message);
   process.exit(1);
-}
-
-// Helper functions
-function showHelp() {
-  console.log(`
-🧹 PDFMaid v${VERSION}
-Your Markdown to PDF/HTML converter with beautiful Mermaid diagram support
-
-USAGE:
-  pdfmaid <input> [options]
-
-ARGUMENTS:
-  <input>           Input file (.md, .markdown, .html, .htm)
-
-OPTIONS:
-  -o, --output <format|file>
-                    Output format ('pdf' or 'html') or output file path
-                    Default: pdf
-
-  -f, --format <format>
-                    Output format ('pdf' or 'html')
-
-  -t, --title <text>
-                    Set document title (default: derived from filename)
-
-  --theme <name>    Theme: 'default' or 'dark' (default: 'default')
-
-  -c, --compact <level>
-                    Set compactness level from -5 (most compact) to 5 (most spacious).
-                    Default: 0
-
-  -w, --wait <ms>   Wait time for Mermaid rendering in ms (default: 2000)
-                    Increase for complex diagrams
-
-  --landscape       Use landscape orientation for PDF
-
-  --keep-html       Keep intermediate HTML file (for md→pdf conversion)
-
-  --no-interactive  Disable interactive features (print/copy buttons)
-
-  --chrome <path>   Path to Chrome/Chromium executable
-
-  -h, --help        Show this help message
-
-  -v, --version     Show version number
-
-EXAMPLES:
-  # Convert Markdown to PDF (default)
-  pdfmaid document.md
-
-  # Convert Markdown to HTML
-  pdfmaid document.md -o html
-
-  # Specify output file
-  pdfmaid document.md -o report.pdf
-
-  # Custom title and dark theme
-  pdfmaid document.md -t "API Docs" --theme dark
-
-  # Make the layout more compact
-  pdfmaid document.md --compact -3
-
-  # Make the layout more spacious
-  pdfmaid document.md --compact 3
-
-  # Complex diagrams with extra wait time
-  pdfmaid architecture.md -w 5000
-
-  # Keep HTML for debugging
-  pdfmaid document.md --keep-html
-
-  # Convert HTML to PDF
-  pdfmaid document.html -o pdf
-
-  # Landscape PDF
-  pdfmaid slides.md --landscape
-
-SUPPORTED FEATURES:
-  ✓ Full Mermaid.js diagram support (flowcharts, sequence, gantt, etc.)
-  ✓ GitHub Flavored Markdown (GFM)
-  ✓ Syntax-highlighted code blocks
-  ✓ Dark and light themes
-  ✓ Professional typography
-  ✓ Print-optimized PDF output
-  ✓ Interactive HTML features
-
-REQUIREMENTS:
-  • Node.js >= 14.0.0
-  • Google Chrome or Chromium (for PDF generation)
-
-For more information, visit: https://github.com/nirabo/pdfmaid
-`);
-}
-
-function showChromeError() {
-  console.error('❌ Error: Chrome/Chromium not found');
-  console.error('');
-  console.error('Please install Google Chrome or Chromium:');
-  console.error('  • Ubuntu/Debian: sudo apt install chromium-browser');
-  console.error('  • Fedora: sudo dnf install chromium');
-  console.error('  • macOS: brew install --cask google-chrome');
-  console.error('  • Or download from: https://www.google.com/chrome/');
-  console.error('');
-  console.error('Alternatively, set CHROME_PATH environment variable:');
-  console.error('  export CHROME_PATH=/path/to/chrome');
-  console.error('');
-  console.error('Or use --chrome flag:');
-  console.error('  pdfmaid document.md --chrome /path/to/chrome');
 }

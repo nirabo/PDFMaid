@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
-const { convertMarkdownFile, htmlToPdf, findChrome } = require('../lib');
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
+const { convertMarkdownFile, htmlToPdf, findChrome } = require('../lib');
 
 const args = process.argv.slice(2);
 
@@ -64,21 +64,25 @@ const pdfOptions = {
 };
 
 // Parse arguments
-for (let i = 1; i < args.length; i++) {
+for (let i = 1; i < args.length; i += 1) {
   const arg = args[i];
 
   if (arg === '--title' && args[i + 1]) {
-    mdOptions.title = args[++i];
+    mdOptions.title = args[i + 1];
+    i += 1;
   } else if (arg === '--theme' && args[i + 1]) {
-    mdOptions.theme = args[++i];
+    mdOptions.theme = args[i + 1];
+    i += 1;
   } else if (arg === '--wait' && args[i + 1]) {
-    pdfOptions.waitTime = parseInt(args[++i], 10);
+    pdfOptions.waitTime = parseInt(args[i + 1], 10);
+    i += 1;
   } else if (arg === '--landscape') {
     pdfOptions.landscape = true;
   } else if (arg === '--keep-html') {
     keepHtml = true;
   } else if (arg === '--chrome' && args[i + 1]) {
-    pdfOptions.chromePath = args[++i];
+    pdfOptions.chromePath = args[i + 1];
+    i += 1;
   } else if (!arg.startsWith('--') && !outputFile) {
     outputFile = arg;
   }

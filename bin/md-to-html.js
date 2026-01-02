@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
 const { convertMarkdownFile } = require('../lib');
-const path = require('path');
 
 const args = process.argv.slice(2);
 
@@ -50,13 +49,15 @@ const options = {
 };
 
 // Parse arguments
-for (let i = 1; i < args.length; i++) {
+for (let i = 1; i < args.length; i += 1) {
   const arg = args[i];
 
   if (arg === '--title' && args[i + 1]) {
-    options.title = args[++i];
+    options.title = args[i + 1];
+    i += 1;
   } else if (arg === '--theme' && args[i + 1]) {
-    options.theme = args[++i];
+    options.theme = args[i + 1];
+    i += 1;
   } else if (arg === '--no-styles') {
     options.includeStyles = false;
   } else if (arg === '--no-print-button') {

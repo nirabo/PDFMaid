@@ -4,6 +4,7 @@ const path = require('path');
 const os = require('os');
 
 const cliPath = path.resolve(__dirname, '../bin/pdfmaid.js');
+const { version } = require('../package.json');
 
 describe('CLI End-to-End Tests', () => {
   let tempDir;
@@ -26,7 +27,6 @@ describe('CLI End-to-End Tests', () => {
 
   it('should show version number with --version', () => {
     const output = execSync(`node ${cliPath} --version`).toString();
-    const { version } = require('../package.json');
     expect(output).toContain(`PDFMaid v${version}`);
   });
 
