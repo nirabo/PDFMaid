@@ -12,14 +12,26 @@
   "scripts": {
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage"
+    "test:coverage": "jest --coverage",
+    "lint": "eslint .",
+    "format": "prettier --write ."
   },
   "jest": {
     "testEnvironment": "node",
-    "testMatch": ["**/test/**/*.test.js"],
-    "collectCoverageFrom": ["lib/**/*.js"],
+    "testMatch": [
+      "**/test/**/*.test.js"
+    ],
+    "collectCoverageFrom": [
+      "lib/**/*.js",
+      "!lib/index.js"
+    ],
     "coverageDirectory": "coverage",
-    "verbose": true
+    "verbose": true,
+    "coverageThreshold": {
+      "global": {
+        "statements": 95
+      }
+    }
   },
   "keywords": [
     "pdfmaid",
@@ -53,7 +65,13 @@
     "marked": "^12.0.0"
   },
   "devDependencies": {
-    "jest": "^30.2.0"
+    "eslint": "^8.57.1",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-prettier": "^5.5.4",
+    "jest": "^27.0.0",
+    "prettier": "^3.7.4"
   },
   "files": [
     "lib/",

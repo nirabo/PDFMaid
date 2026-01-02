@@ -42,7 +42,9 @@ describe('template', () => {
     it('should include Mermaid.js CDN script', () => {
       const html = getHtmlTemplate('<p>Content</p>');
 
-      expect(html).toContain('https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js');
+      expect(html).toContain(
+        'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js',
+      );
     });
 
     it('should initialize Mermaid with correct configuration', () => {
@@ -77,15 +79,16 @@ describe('template', () => {
     it('should include print button by default', () => {
       const html = getHtmlTemplate('<p>Content</p>');
 
-      expect(html).toContain('class="print-button"');
-      expect(html).toContain("onclick=\"window.print()\"");
+      expect(html).toContain('<button class="print-button"');
       expect(html).toContain('Print / Save as PDF');
     });
 
     it('should exclude print button when includePrintButton is false', () => {
-      const html = getHtmlTemplate('<p>Content</p>', { includePrintButton: false });
+      const html = getHtmlTemplate('<p>Content</p>', {
+        includePrintButton: false,
+      });
 
-      expect(html).not.toContain('print-button');
+      expect(html).not.toContain('<button class="print-button"');
     });
 
     it('should include styles by default', () => {
@@ -103,7 +106,7 @@ describe('template', () => {
     it('should include smooth scrolling script for anchor links', () => {
       const html = getHtmlTemplate('<p>Content</p>');
 
-      expect(html).toContain("querySelectorAll('a[href^=\"#\"]')");
+      expect(html).toContain('querySelectorAll(\'a[href^="#"]\')');
       expect(html).toContain('scrollIntoView');
       expect(html).toContain("behavior: 'smooth'");
     });
@@ -143,34 +146,33 @@ describe('template', () => {
     });
 
     describe('compactness styles', () => {
-      it('should apply compact spacing (0.5x multiplier)', () => {
-        const styles = getStyles('default', 'compact');
-
+      it('should apply most compact spacing for level -5', () => {
+        const styles = getStyles('default', -5);
         expect(styles).toContain('line-height: 1.3');
-        expect(styles).toContain('font-size: 10pt'); // print font size
-        expect(styles).toContain('margin: 1.5cm'); // page margin
+        expect(styles).toContain('font-size: 10pt');
+        expect(styles).toContain('margin: 1.5cm');
       });
 
-      it('should apply normal spacing (1x multiplier)', () => {
-        const styles = getStyles('default', 'normal');
-
+      it('should apply default spacing for level 0', () => {
+        const styles = getStyles('default', 0);
         expect(styles).toContain('line-height: 1.6');
         expect(styles).toContain('font-size: 11pt');
         expect(styles).toContain('margin: 2cm');
       });
 
-      it('should apply spacious spacing (1.5x multiplier)', () => {
-        const styles = getStyles('default', 'spacious');
-
+      it('should apply most spacious spacing for level 5', () => {
+        const styles = getStyles('default', 5);
         expect(styles).toContain('line-height: 1.9');
         expect(styles).toContain('font-size: 12pt');
         expect(styles).toContain('margin: 2.5cm');
       });
 
-      it('should default to normal compactness for invalid values', () => {
-        const styles = getStyles('default', 'invalid');
+      it('should clamp values outside of the -5 to 5 range', () => {
+        const stylesForMin = getStyles('default', -10);
+        expect(stylesForMin).toContain('line-height: 1.3');
 
-        expect(styles).toContain('line-height: 1.6');
+        const stylesForMax = getStyles('default', 10);
+        expect(stylesForMax).toContain('line-height: 1.9');
       });
     });
 

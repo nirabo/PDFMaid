@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
 const { htmlToPdf, findChrome } = require('../lib');
-const path = require('path');
 
 const args = process.argv.slice(2);
 
@@ -47,19 +46,21 @@ let outputFile = null;
 const options = {
   waitTime: 2000,
   landscape: false,
-  chromePath: null
+  chromePath: null,
 };
 
 // Parse arguments
-for (let i = 1; i < args.length; i++) {
+for (let i = 1; i < args.length; i += 1) {
   const arg = args[i];
 
   if (arg === '--wait' && args[i + 1]) {
-    options.waitTime = parseInt(args[++i], 10);
+    options.waitTime = parseInt(args[i + 1], 10);
+    i += 1;
   } else if (arg === '--landscape') {
     options.landscape = true;
   } else if (arg === '--chrome' && args[i + 1]) {
-    options.chromePath = args[++i];
+    options.chromePath = args[i + 1];
+    i += 1;
   } else if (!arg.startsWith('--') && !outputFile) {
     outputFile = arg;
   }
@@ -108,6 +109,8 @@ try {
 } catch (error) {
   console.error('❌ Error:', error.message);
   console.error('');
-  console.error('Alternative: Open the HTML file in your browser and use Print → Save as PDF');
+  console.error(
+    'Alternative: Open the HTML file in your browser and use Print → Save as PDF',
+  );
   process.exit(1);
 }

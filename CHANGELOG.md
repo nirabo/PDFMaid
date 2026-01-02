@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.0.0] - 2025-10-25
 
 ### Added
+
 - **Rebranded as PDFMaid** (formerly md-mermaid-pdf)
 - **New unified CLI command** `pdfmaid` - single entry point for all conversions
 - Markdown to HTML conversion with Mermaid support
@@ -30,6 +31,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Version display with `-v` or `--version`
 
 ### Features
+
 - ✅ Unified CLI with intelligent routing based on input type
 - ✅ Full Mermaid.js diagram support (all diagram types)
 - ✅ Responsive tables and styling
@@ -43,6 +45,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - ✅ Custom output file paths
 
 ### Changed
+
 - Package name: `md-mermaid-pdf` → `pdfmaid`
 - Main command: `md-to-pdf` → `pdfmaid` (with `-o` flag for format selection)
 - Repository: https://github.com/nirabo/pdfmaid

@@ -15,6 +15,7 @@ This is a sample document demonstrating `md-mermaid-pdf` features.
 **md-mermaid-pdf** converts Markdown documents with Mermaid diagrams to beautiful HTML and PDF files.
 
 Features:
+
 - ✅ Full Mermaid.js support
 - ✅ Syntax highlighting
 - ✅ Professional styling
@@ -64,7 +65,7 @@ function convertMarkdown(input, output) {
 
   convertMarkdownFile(input, output, {
     title: 'My Document',
-    theme: 'default'
+    theme: 'default',
   });
 
   console.log(`✅ Converted ${input} to ${output}`);
@@ -98,21 +99,21 @@ done
 
 ### Feature Comparison
 
-| Feature | HTML | PDF | Notes |
-|---------|------|-----|-------|
-| Mermaid Diagrams | ✅ | ✅ | Fully rendered |
-| Code Highlighting | ✅ | ✅ | All languages |
-| Interactive | ✅ | ❌ | HTML only |
-| Print Ready | ✅ | ✅ | Optimized |
-| File Size | Small | Medium | PDF is larger |
+| Feature           | HTML  | PDF    | Notes          |
+| ----------------- | ----- | ------ | -------------- |
+| Mermaid Diagrams  | ✅    | ✅     | Fully rendered |
+| Code Highlighting | ✅    | ✅     | All languages  |
+| Interactive       | ✅    | ❌     | HTML only      |
+| Print Ready       | ✅    | ✅     | Optimized      |
+| File Size         | Small | Medium | PDF is larger  |
 
 ### CLI Commands
 
-| Command | Purpose | Example |
-|---------|---------|---------|
-| `md-to-html` | Markdown → HTML | `md-to-html doc.md` |
-| `html-to-pdf` | HTML → PDF | `html-to-pdf doc.html` |
-| `md-to-pdf` | Markdown → PDF | `md-to-pdf doc.md` |
+| Command       | Purpose         | Example                |
+| ------------- | --------------- | ---------------------- |
+| `md-to-html`  | Markdown → HTML | `md-to-html doc.md`    |
+| `html-to-pdf` | HTML → PDF      | `html-to-pdf doc.html` |
+| `md-to-pdf`   | Markdown → PDF  | `md-to-pdf doc.md`     |
 
 ## Blockquote Example
 
