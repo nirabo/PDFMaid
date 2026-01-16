@@ -1,0 +1,1247 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gantt Test</title>
+
+    <!-- Mermaid.js -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+      mermaid.initialize({
+        startOnLoad: true,
+        theme: 'default',
+        securityLevel: 'loose',
+        flowchart: {
+          useMaxWidth: true,
+          htmlLabels: true,
+          curve: 'basis',
+        },
+      });
+    </script>
+
+    <style>
+      :root {
+        --color-primary: #2563eb;
+        --color-secondary: #64748b;
+        --color-success: #10b981;
+        --color-warning: #f59e0b;
+        --color-danger: #ef4444;
+        --color-bg: #ffffff;
+        --color-bg-alt: #f8fafc;
+        --color-border: #e2e8f0;
+        --color-text: #1e293b;
+        --color-text-muted: #64748b;
+      }
+
+      @media print {
+        body {
+          font-size: 11pt;
+          line-height: 1.4000000000000001;
+        }
+
+        h1 {
+          page-break-before: always;
+        }
+
+        h1:first-of-type {
+          page-break-before: avoid;
+        }
+
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+          page-break-after: avoid;
+        }
+
+        pre,
+        blockquote,
+        table,
+        .mermaid {
+          page-break-inside: avoid;
+        }
+
+        @page {
+          margin: 2cm;
+          size: A4;
+        }
+
+        .print-button,
+        .copy-button {
+          display: none;
+        }
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto',
+          'Helvetica Neue', Arial, sans-serif;
+        line-height: 1.6;
+        color: var(--color-text);
+        background: var(--color-bg);
+        padding: 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        font-weight: 700;
+        line-height: 1.3;
+        margin-top: 2rem;
+        margin-bottom: 1rem;
+        color: var(--color-text);
+      }
+
+      h1 {
+        font-size: 2.5rem;
+        border-bottom: 3px solid var(--color-primary);
+        padding-bottom: 0.5rem;
+        margin-top: 0;
+      }
+
+      h2 {
+        font-size: 2rem;
+        border-bottom: 2px solid var(--color-border);
+        padding-bottom: 0.3rem;
+      }
+
+      h3 {
+        font-size: 1.5rem;
+        color: var(--color-primary);
+      }
+
+      h4 {
+        font-size: 1.25rem;
+      }
+
+      h5 {
+        font-size: 1.1rem;
+      }
+
+      p {
+        margin-bottom: 1rem;
+      }
+
+      a {
+        color: var(--color-primary);
+        text-decoration: none;
+      }
+
+      a:hover {
+        text-decoration: underline;
+      }
+
+      code {
+        background: var(--color-bg-alt);
+        padding: 0.2em 0.4em;
+        border-radius: 3px;
+        font-family: 'Courier New', Courier, monospace;
+        font-size: 0.9em;
+        color: var(--color-danger);
+      }
+
+      pre {
+        background: var(--color-bg-alt);
+        border: 1px solid var(--color-border);
+        border-radius: 6px;
+        padding: 1rem;
+        overflow-x: auto;
+        margin-bottom: 1rem;
+      }
+
+      pre code {
+        background: transparent;
+        padding: 0;
+        color: var(--color-text);
+        font-size: 0.875rem;
+      }
+
+      ul,
+      ol {
+        margin-bottom: 1rem;
+        padding-left: 2rem;
+      }
+
+      li {
+        margin-bottom: 0.5rem;
+      }
+
+      blockquote {
+        border-left: 4px solid var(--color-primary);
+        padding-left: 1rem;
+        margin: 1rem 0;
+        color: var(--color-text-muted);
+        font-style: italic;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 1rem;
+        font-size: 0.9rem;
+      }
+
+      th,
+      td {
+        border: 1px solid var(--color-border);
+        padding: 0.75rem;
+        text-align: left;
+      }
+
+      th {
+        background: var(--color-bg-alt);
+        font-weight: 600;
+      }
+
+      tr:nth-child(even) {
+        background: var(--color-bg-alt);
+      }
+
+      hr {
+        border: none;
+        border-top: 2px solid var(--color-border);
+        margin: 2rem 0;
+      }
+
+      .mermaid {
+        background: var(--color-bg);
+        border: 1px solid var(--color-border);
+        border-radius: 8px;
+        padding: 2rem 1rem;
+        margin: 2rem 0;
+        display: flex;
+        justify-content: center;
+        overflow-x: auto;
+      }
+
+      /* Pre-rendered Mermaid diagrams (SVG) */
+      .mermaid-container {
+        background: var(--color-bg);
+        border: 1px solid var(--color-border);
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin: 2rem 0;
+        overflow-x: auto;
+        text-align: center;
+      }
+
+      .mermaid-container svg.mermaid-prerendered {
+        max-width: 100%;
+        height: auto;
+        display: inline-block;
+      }
+
+      /* Gantt charts and wide diagrams need special handling */
+      .mermaid-container svg.mermaid-prerendered[data-diagram-type='gantt'],
+      .mermaid-container svg.mermaid-prerendered[data-diagram-type='timeline'],
+      .mermaid-container svg.mermaid-prerendered[data-diagram-type='gitgraph'] {
+        max-width: none;
+        width: auto;
+      }
+
+      @media print {
+        .mermaid-container {
+          page-break-inside: avoid;
+          overflow: visible;
+        }
+
+        /* For print, allow Gantt charts to use their natural width */
+        .mermaid-container svg.mermaid-prerendered[data-diagram-type='gantt'],
+        .mermaid-container
+          svg.mermaid-prerendered[data-diagram-type='timeline'] {
+          max-width: none;
+          width: auto;
+          transform-origin: left top;
+        }
+      }
+
+      /* Metadata styling */
+      p strong {
+        color: var(--color-primary);
+      }
+
+      /* Special styling for examples */
+      pre[class*='language-'] {
+        position: relative;
+      }
+
+      /* Table of contents styling */
+      nav ol {
+        list-style-position: inside;
+      }
+
+      nav a {
+        font-weight: 500;
+      }
+
+      /* Print button */
+      .print-button {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: var(--color-primary);
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+        transition: background 0.2s;
+      }
+
+      .print-button:hover {
+        background: #1d4ed8;
+      }
+
+      /* Copy button */
+      .copy-button {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        padding: 5px 10px;
+        font-size: 12px;
+        cursor: pointer;
+        background: var(--color-primary);
+        color: white;
+        border: none;
+        border-radius: 4px;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+
+      pre:hover .copy-button {
+        opacity: 1;
+      }
+
+      .copy-button:hover {
+        background: #1d4ed8;
+      }
+
+      /* Syntax highlighting for code blocks */
+      .hljs-keyword {
+        color: #d73a49;
+      }
+      .hljs-string {
+        color: #032f62;
+      }
+      .hljs-comment {
+        color: #6a737d;
+        font-style: italic;
+      }
+      .hljs-function {
+        color: #6f42c1;
+      }
+      .hljs-number {
+        color: #005cc5;
+      }
+    </style>
+  </head>
+  <body>
+    <button class="print-button" onclick="window.print()">
+      🖨️ Print / Save as PDF
+    </button>
+
+    <article>
+      <h1>Phase 3: New Data &amp; Temporal Features (Weeks 29-40)</h1>
+      <p>
+        <strong>Phase Goals:</strong> Enable ongoing data integration, temporal
+        querying, and external data sources
+      </p>
+      <h2>Project Timeline</h2>
+      <div class="mermaid-container">
+        <svg
+          class="mermaid-prerendered"
+          data-diagram-type="gantt"
+          width="1900"
+          height="614"
+          id="mermaid-1768578590195"
+          width="1800"
+          xmlns="http://www.w3.org/2000/svg"
+          xmlns:xlink="http://www.w3.org/1999/xlink"
+          viewBox="0 0 1800 614"
+          height="614"
+          role="graphics-document document"
+          aria-roledescription="gantt"
+        >
+          <style>
+            #mermaid-1768578590195 {
+              font-family: 'trebuchet ms', verdana, arial, sans-serif;
+              font-size: 16px;
+              fill: #333;
+            }
+            #mermaid-1768578590195 .error-icon {
+              fill: #552222;
+            }
+            #mermaid-1768578590195 .error-text {
+              fill: #552222;
+              stroke: #552222;
+            }
+            #mermaid-1768578590195 .edge-thickness-normal {
+              stroke-width: 2px;
+            }
+            #mermaid-1768578590195 .edge-thickness-thick {
+              stroke-width: 3.5px;
+            }
+            #mermaid-1768578590195 .edge-pattern-solid {
+              stroke-dasharray: 0;
+            }
+            #mermaid-1768578590195 .edge-pattern-dashed {
+              stroke-dasharray: 3;
+            }
+            #mermaid-1768578590195 .edge-pattern-dotted {
+              stroke-dasharray: 2;
+            }
+            #mermaid-1768578590195 .marker {
+              fill: #333333;
+              stroke: #333333;
+            }
+            #mermaid-1768578590195 .marker.cross {
+              stroke: #333333;
+            }
+            #mermaid-1768578590195 svg {
+              font-family: 'trebuchet ms', verdana, arial, sans-serif;
+              font-size: 16px;
+            }
+            #mermaid-1768578590195 .mermaid-main-font {
+              font-family: var(
+                --mermaid-font-family,
+                'trebuchet ms',
+                verdana,
+                arial,
+                sans-serif
+              );
+            }
+            #mermaid-1768578590195 .exclude-range {
+              fill: #eeeeee;
+            }
+            #mermaid-1768578590195 .section {
+              stroke: none;
+              opacity: 0.2;
+            }
+            #mermaid-1768578590195 .section0 {
+              fill: rgba(102, 102, 255, 0.49);
+            }
+            #mermaid-1768578590195 .section2 {
+              fill: #fff400;
+            }
+            #mermaid-1768578590195 .section1,
+            #mermaid-1768578590195 .section3 {
+              fill: white;
+              opacity: 0.2;
+            }
+            #mermaid-1768578590195 .sectionTitle0 {
+              fill: #333;
+            }
+            #mermaid-1768578590195 .sectionTitle1 {
+              fill: #333;
+            }
+            #mermaid-1768578590195 .sectionTitle2 {
+              fill: #333;
+            }
+            #mermaid-1768578590195 .sectionTitle3 {
+              fill: #333;
+            }
+            #mermaid-1768578590195 .sectionTitle {
+              text-anchor: start;
+              font-family: var(
+                --mermaid-font-family,
+                'trebuchet ms',
+                verdana,
+                arial,
+                sans-serif
+              );
+            }
+            #mermaid-1768578590195 .grid .tick {
+              stroke: lightgrey;
+              opacity: 0.8;
+              shape-rendering: crispEdges;
+            }
+            #mermaid-1768578590195 .grid .tick text {
+              font-family: 'trebuchet ms', verdana, arial, sans-serif;
+              fill: #333;
+            }
+            #mermaid-1768578590195 .grid path {
+              stroke-width: 0;
+            }
+            #mermaid-1768578590195 .today {
+              fill: none;
+              stroke: red;
+              stroke-width: 2px;
+            }
+            #mermaid-1768578590195 .task {
+              stroke-width: 2;
+            }
+            #mermaid-1768578590195 .taskText {
+              text-anchor: middle;
+              font-family: var(
+                --mermaid-font-family,
+                'trebuchet ms',
+                verdana,
+                arial,
+                sans-serif
+              );
+            }
+            #mermaid-1768578590195 .taskTextOutsideRight {
+              fill: black;
+              text-anchor: start;
+              font-family: var(
+                --mermaid-font-family,
+                'trebuchet ms',
+                verdana,
+                arial,
+                sans-serif
+              );
+            }
+            #mermaid-1768578590195 .taskTextOutsideLeft {
+              fill: black;
+              text-anchor: end;
+            }
+            #mermaid-1768578590195 .task.clickable {
+              cursor: pointer;
+            }
+            #mermaid-1768578590195 .taskText.clickable {
+              cursor: pointer;
+              fill: #003163 !important;
+              font-weight: bold;
+            }
+            #mermaid-1768578590195 .taskTextOutsideLeft.clickable {
+              cursor: pointer;
+              fill: #003163 !important;
+              font-weight: bold;
+            }
+            #mermaid-1768578590195 .taskTextOutsideRight.clickable {
+              cursor: pointer;
+              fill: #003163 !important;
+              font-weight: bold;
+            }
+            #mermaid-1768578590195 .taskText0,
+            #mermaid-1768578590195 .taskText1,
+            #mermaid-1768578590195 .taskText2,
+            #mermaid-1768578590195 .taskText3 {
+              fill: white;
+            }
+            #mermaid-1768578590195 .task0,
+            #mermaid-1768578590195 .task1,
+            #mermaid-1768578590195 .task2,
+            #mermaid-1768578590195 .task3 {
+              fill: #8a90dd;
+              stroke: #534fbc;
+            }
+            #mermaid-1768578590195 .taskTextOutside0,
+            #mermaid-1768578590195 .taskTextOutside2 {
+              fill: black;
+            }
+            #mermaid-1768578590195 .taskTextOutside1,
+            #mermaid-1768578590195 .taskTextOutside3 {
+              fill: black;
+            }
+            #mermaid-1768578590195 .active0,
+            #mermaid-1768578590195 .active1,
+            #mermaid-1768578590195 .active2,
+            #mermaid-1768578590195 .active3 {
+              fill: #bfc7ff;
+              stroke: #534fbc;
+            }
+            #mermaid-1768578590195 .activeText0,
+            #mermaid-1768578590195 .activeText1,
+            #mermaid-1768578590195 .activeText2,
+            #mermaid-1768578590195 .activeText3 {
+              fill: black !important;
+            }
+            #mermaid-1768578590195 .done0,
+            #mermaid-1768578590195 .done1,
+            #mermaid-1768578590195 .done2,
+            #mermaid-1768578590195 .done3 {
+              stroke: grey;
+              fill: lightgrey;
+              stroke-width: 2;
+            }
+            #mermaid-1768578590195 .doneText0,
+            #mermaid-1768578590195 .doneText1,
+            #mermaid-1768578590195 .doneText2,
+            #mermaid-1768578590195 .doneText3 {
+              fill: black !important;
+            }
+            #mermaid-1768578590195 .crit0,
+            #mermaid-1768578590195 .crit1,
+            #mermaid-1768578590195 .crit2,
+            #mermaid-1768578590195 .crit3 {
+              stroke: #ff8888;
+              fill: red;
+              stroke-width: 2;
+            }
+            #mermaid-1768578590195 .activeCrit0,
+            #mermaid-1768578590195 .activeCrit1,
+            #mermaid-1768578590195 .activeCrit2,
+            #mermaid-1768578590195 .activeCrit3 {
+              stroke: #ff8888;
+              fill: #bfc7ff;
+              stroke-width: 2;
+            }
+            #mermaid-1768578590195 .doneCrit0,
+            #mermaid-1768578590195 .doneCrit1,
+            #mermaid-1768578590195 .doneCrit2,
+            #mermaid-1768578590195 .doneCrit3 {
+              stroke: #ff8888;
+              fill: lightgrey;
+              stroke-width: 2;
+              cursor: pointer;
+              shape-rendering: crispEdges;
+            }
+            #mermaid-1768578590195 .milestone {
+              transform: rotate(45deg) scale(0.8, 0.8);
+            }
+            #mermaid-1768578590195 .milestoneText {
+              font-style: italic;
+            }
+            #mermaid-1768578590195 .doneCritText0,
+            #mermaid-1768578590195 .doneCritText1,
+            #mermaid-1768578590195 .doneCritText2,
+            #mermaid-1768578590195 .doneCritText3 {
+              fill: black !important;
+            }
+            #mermaid-1768578590195 .activeCritText0,
+            #mermaid-1768578590195 .activeCritText1,
+            #mermaid-1768578590195 .activeCritText2,
+            #mermaid-1768578590195 .activeCritText3 {
+              fill: black !important;
+            }
+            #mermaid-1768578590195 .titleText {
+              text-anchor: middle;
+              font-size: 18px;
+              fill: #333;
+              font-family: var(
+                --mermaid-font-family,
+                'trebuchet ms',
+                verdana,
+                arial,
+                sans-serif
+              );
+            }
+            #mermaid-1768578590195 :root {
+              --mermaid-font-family: 'trebuchet ms', verdana, arial, sans-serif;
+            }
+          </style>
+          <g></g>
+          <g
+            class="grid"
+            transform="translate(150, 564)"
+            fill="none"
+            font-size="10"
+            font-family="sans-serif"
+            text-anchor="middle"
+          >
+            <path
+              class="domain"
+              stroke="currentColor"
+              d="M0,-519V0H1600V-519"
+            ></path>
+            <g class="tick" opacity="1" transform="translate(139,0)">
+              <line stroke="currentColor" y2="-519"></line>
+              <text
+                fill="#000"
+                y="3"
+                dy="1em"
+                stroke="none"
+                font-size="10"
+                style="text-anchor: middle"
+              >
+                2024-07-21
+              </text>
+            </g>
+            <g class="tick" opacity="1" transform="translate(301,0)">
+              <line stroke="currentColor" y2="-519"></line>
+              <text
+                fill="#000"
+                y="3"
+                dy="1em"
+                stroke="none"
+                font-size="10"
+                style="text-anchor: middle"
+              >
+                2024-07-28
+              </text>
+            </g>
+            <g class="tick" opacity="1" transform="translate(464,0)">
+              <line stroke="currentColor" y2="-519"></line>
+              <text
+                fill="#000"
+                y="3"
+                dy="1em"
+                stroke="none"
+                font-size="10"
+                style="text-anchor: middle"
+              >
+                2024-08-04
+              </text>
+            </g>
+            <g class="tick" opacity="1" transform="translate(626,0)">
+              <line stroke="currentColor" y2="-519"></line>
+              <text
+                fill="#000"
+                y="3"
+                dy="1em"
+                stroke="none"
+                font-size="10"
+                style="text-anchor: middle"
+              >
+                2024-08-11
+              </text>
+            </g>
+            <g class="tick" opacity="1" transform="translate(788,0)">
+              <line stroke="currentColor" y2="-519"></line>
+              <text
+                fill="#000"
+                y="3"
+                dy="1em"
+                stroke="none"
+                font-size="10"
+                style="text-anchor: middle"
+              >
+                2024-08-18
+              </text>
+            </g>
+            <g class="tick" opacity="1" transform="translate(951,0)">
+              <line stroke="currentColor" y2="-519"></line>
+              <text
+                fill="#000"
+                y="3"
+                dy="1em"
+                stroke="none"
+                font-size="10"
+                style="text-anchor: middle"
+              >
+                2024-08-25
+              </text>
+            </g>
+            <g class="tick" opacity="1" transform="translate(1113,0)">
+              <line stroke="currentColor" y2="-519"></line>
+              <text
+                fill="#000"
+                y="3"
+                dy="1em"
+                stroke="none"
+                font-size="10"
+                style="text-anchor: middle"
+              >
+                2024-09-01
+              </text>
+            </g>
+            <g class="tick" opacity="1" transform="translate(1275,0)">
+              <line stroke="currentColor" y2="-519"></line>
+              <text
+                fill="#000"
+                y="3"
+                dy="1em"
+                stroke="none"
+                font-size="10"
+                style="text-anchor: middle"
+              >
+                2024-09-08
+              </text>
+            </g>
+            <g class="tick" opacity="1" transform="translate(1438,0)">
+              <line stroke="currentColor" y2="-519"></line>
+              <text
+                fill="#000"
+                y="3"
+                dy="1em"
+                stroke="none"
+                font-size="10"
+                style="text-anchor: middle"
+              >
+                2024-09-15
+              </text>
+            </g>
+            <g class="tick" opacity="1" transform="translate(1600,0)">
+              <line stroke="currentColor" y2="-519"></line>
+              <text
+                fill="#000"
+                y="3"
+                dy="1em"
+                stroke="none"
+                font-size="10"
+                style="text-anchor: middle"
+              >
+                2024-09-22
+              </text>
+            </g>
+          </g>
+          <g>
+            <rect
+              x="0"
+              y="58"
+              width="1775"
+              height="38"
+              class="section section0"
+            ></rect>
+            <rect
+              x="0"
+              y="96"
+              width="1775"
+              height="38"
+              class="section section0"
+            ></rect>
+            <rect
+              x="0"
+              y="134"
+              width="1775"
+              height="38"
+              class="section section0"
+            ></rect>
+            <rect
+              x="0"
+              y="172"
+              width="1775"
+              height="38"
+              class="section section0"
+            ></rect>
+            <rect
+              x="0"
+              y="210"
+              width="1775"
+              height="38"
+              class="section section0"
+            ></rect>
+            <rect
+              x="0"
+              y="248"
+              width="1775"
+              height="38"
+              class="section section1"
+            ></rect>
+            <rect
+              x="0"
+              y="286"
+              width="1775"
+              height="38"
+              class="section section1"
+            ></rect>
+            <rect
+              x="0"
+              y="324"
+              width="1775"
+              height="38"
+              class="section section1"
+            ></rect>
+            <rect
+              x="0"
+              y="362"
+              width="1775"
+              height="38"
+              class="section section2"
+            ></rect>
+            <rect
+              x="0"
+              y="400"
+              width="1775"
+              height="38"
+              class="section section2"
+            ></rect>
+            <rect
+              x="0"
+              y="438"
+              width="1775"
+              height="38"
+              class="section section2"
+            ></rect>
+            <rect
+              x="0"
+              y="476"
+              width="1775"
+              height="38"
+              class="section section2"
+            ></rect>
+            <rect
+              x="0"
+              y="514"
+              width="1775"
+              height="38"
+              class="section section2"
+            ></rect>
+          </g>
+          <g>
+            <rect
+              id="a1"
+              rx="3"
+              ry="3"
+              x="150"
+              y="60"
+              width="162"
+              height="30"
+              transform-origin="231px 75px"
+              class="task task0"
+            ></rect>
+            <rect
+              id="a2"
+              rx="3"
+              ry="3"
+              x="312"
+              y="98"
+              width="163"
+              height="30"
+              transform-origin="393.5px 113px"
+              class="task task0"
+            ></rect>
+            <rect
+              id="a3"
+              rx="3"
+              ry="3"
+              x="475"
+              y="136"
+              width="162"
+              height="30"
+              transform-origin="556px 151px"
+              class="task task0"
+            ></rect>
+            <rect
+              id="m1"
+              rx="3"
+              ry="3"
+              x="622"
+              y="174"
+              width="30"
+              height="30"
+              transform-origin="637px 189px"
+              class="task milestone task0"
+            ></rect>
+            <rect
+              id="a4"
+              rx="3"
+              ry="3"
+              x="637"
+              y="212"
+              width="116"
+              height="30"
+              transform-origin="695px 227px"
+              class="task task0"
+            ></rect>
+            <rect
+              id="b1"
+              rx="3"
+              ry="3"
+              x="753"
+              y="250"
+              width="162"
+              height="30"
+              transform-origin="834px 265px"
+              class="task task1"
+            ></rect>
+            <rect
+              id="b2"
+              rx="3"
+              ry="3"
+              x="915"
+              y="288"
+              width="163"
+              height="30"
+              transform-origin="996.5px 303px"
+              class="task task1"
+            ></rect>
+            <rect
+              id="m2"
+              rx="3"
+              ry="3"
+              x="1063"
+              y="326"
+              width="30"
+              height="30"
+              transform-origin="1078px 341px"
+              class="task milestone task1"
+            ></rect>
+            <rect
+              id="c1"
+              rx="3"
+              ry="3"
+              x="1078"
+              y="364"
+              width="231"
+              height="30"
+              transform-origin="1193.5px 379px"
+              class="task task2"
+            ></rect>
+            <rect
+              id="c2"
+              rx="3"
+              ry="3"
+              x="1309"
+              y="402"
+              width="163"
+              height="30"
+              transform-origin="1390.5px 417px"
+              class="task task2"
+            ></rect>
+            <rect
+              id="c3"
+              rx="3"
+              ry="3"
+              x="1472"
+              y="440"
+              width="116"
+              height="30"
+              transform-origin="1530px 455px"
+              class="task task2"
+            ></rect>
+            <rect
+              id="c4"
+              rx="3"
+              ry="3"
+              x="1588"
+              y="478"
+              width="162"
+              height="30"
+              transform-origin="1669px 493px"
+              class="task task2"
+            ></rect>
+            <rect
+              id="m3"
+              rx="3"
+              ry="3"
+              x="1735"
+              y="516"
+              width="30"
+              height="30"
+              transform-origin="1750px 531px"
+              class="task milestone task2"
+            ></rect>
+            <text
+              id="a1-text"
+              font-size="14"
+              x="231"
+              y="80"
+              text-height="30"
+              class="taskText taskText0 width-136.10804748535156"
+            >
+              New Patient Ingestion
+            </text>
+            <text
+              id="a2-text"
+              font-size="14"
+              x="393.5"
+              y="118"
+              text-height="30"
+              class="taskText taskText0 width-162.49717712402344"
+            >
+              Longitudinal Data Support
+            </text>
+            <text
+              id="a3-text"
+              font-size="14"
+              x="556"
+              y="156"
+              text-height="30"
+              class="taskText taskText0 width-146.99954223632812"
+            >
+              Research Data Pipeline
+            </text>
+            <text
+              id="m1-text"
+              font-size="14"
+              x="657"
+              y="194"
+              text-height="30"
+              class="taskTextOutsideRight taskTextOutside0 milestoneText width-72.32308197021484"
+            >
+              M3.1 Demo
+            </text>
+            <text
+              id="a4-text"
+              font-size="14"
+              x="758"
+              y="232"
+              text-height="30"
+              class="taskTextOutsideRight taskTextOutside0 width-136.0936737060547"
+            >
+              Query Session Dating
+            </text>
+            <text
+              id="b1-text"
+              font-size="14"
+              x="920"
+              y="270"
+              text-height="30"
+              class="taskTextOutsideRight taskTextOutside1 width-162.55479431152344"
+            >
+              Temporal Data Application
+            </text>
+            <text
+              id="b2-text"
+              font-size="14"
+              x="996.5"
+              y="308"
+              text-height="30"
+              class="taskText taskText1 width-116.22892761230469"
+            >
+              Session Continuity
+            </text>
+            <text
+              id="m2-text"
+              font-size="14"
+              x="1098"
+              y="346"
+              text-height="30"
+              class="taskTextOutsideRight taskTextOutside1 milestoneText width-72.32308197021484"
+            >
+              M3.2 Demo
+            </text>
+            <text
+              id="c1-text"
+              font-size="14"
+              x="1193.5"
+              y="384"
+              text-height="30"
+              class="taskText taskText2 width-179.18191528320312"
+            >
+              REST/HL7/FHIR Connectors
+            </text>
+            <text
+              id="c2-text"
+              font-size="14"
+              x="1477"
+              y="422"
+              text-height="30"
+              class="taskTextOutsideRight taskTextOutside2 width-163.31527709960938"
+            >
+              Semantic Configuration UI
+            </text>
+            <text
+              id="c3-text"
+              font-size="14"
+              x="1467"
+              y="460"
+              text-height="30"
+              class="taskTextOutsideLeft taskTextOutside2"
+            >
+              Generalized RAS Interface
+            </text>
+            <text
+              id="c4-text"
+              font-size="14"
+              x="1669"
+              y="498"
+              text-height="30"
+              class="taskText taskText2 width-148.3053741455078"
+            >
+              Final Integration Testing
+            </text>
+            <text
+              id="m3-text"
+              font-size="14"
+              x="1730"
+              y="536"
+              text-height="30"
+              class="taskTextOutsideLeft taskTextOutside2 milestoneText"
+            >
+              Phase 3 UAT
+            </text>
+          </g>
+          <g>
+            <text
+              dy="0em"
+              x="10"
+              y="155"
+              font-size="14"
+              class="sectionTitle sectionTitle0"
+            >
+              <tspan alignment-baseline="central" x="10">
+                Milestone 3.1 (Weeks 29-32)
+              </tspan>
+            </text>
+            <text
+              dy="0em"
+              x="10"
+              y="307"
+              font-size="14"
+              class="sectionTitle sectionTitle1"
+            >
+              <tspan alignment-baseline="central" x="10">
+                Milestone 3.2 (Weeks 33-35)
+              </tspan>
+            </text>
+            <text
+              dy="0em"
+              x="10"
+              y="459"
+              font-size="14"
+              class="sectionTitle sectionTitle2"
+            >
+              <tspan alignment-baseline="central" x="10">
+                Milestone 3.3 (Weeks 36-40)
+              </tspan>
+            </text>
+          </g>
+          <g class="today">
+            <line x1="12922" x2="12922" y1="25" y2="589" class="today"></line>
+          </g>
+          <text x="900" y="25" class="titleText">
+            Phase 3: Data Evolution (12 Weeks)
+          </text>
+        </svg>
+      </div>
+
+      <h2>Key Deliverables</h2>
+      <ol>
+        <li>New Patient Ingestion system</li>
+        <li>Longitudinal Data Support</li>
+        <li>Research Data Pipeline</li>
+        <li>Temporal Data Application</li>
+        <li>REST/HL7/FHIR Connectors</li>
+        <li>Semantic Configuration UI</li>
+      </ol>
+      <h2>Notes</h2>
+      <p>
+        This Gantt chart demonstrates the timeline for Phase 3 of the project,
+        spanning 12 weeks with three major milestones.
+      </p>
+    </article>
+
+    <script>
+      // Add smooth scrolling for anchor links
+      document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+        anchor.addEventListener('click', function (e) {
+          e.preventDefault();
+          const target = document.querySelector(this.getAttribute('href'));
+          if (target) {
+            target.scrollIntoView({ behavior: 'smooth' });
+          }
+        });
+      });
+
+      // Add copy button to code blocks
+      document.querySelectorAll('pre code').forEach((block) => {
+        // Skip mermaid blocks
+        if (block.parentElement.parentElement.classList.contains('mermaid')) {
+          return;
+        }
+
+        const button = document.createElement('button');
+        button.textContent = 'Copy';
+        button.className = 'copy-button';
+
+        button.addEventListener('click', () => {
+          navigator.clipboard.writeText(block.textContent);
+          button.textContent = 'Copied!';
+          setTimeout(() => (button.textContent = 'Copy'), 2000);
+        });
+
+        block.parentElement.style.position = 'relative';
+        block.parentElement.appendChild(button);
+      });
+    </script>
+  </body>
+</html>

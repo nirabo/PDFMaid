@@ -3,7 +3,12 @@
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
-const { convertMarkdownFile, htmlToPdf, findChrome } = require('../lib');
+const {
+  convertMarkdownFile,
+  convertMarkdownFileAsync,
+  htmlToPdf,
+  findChrome,
+} = require('../lib');
 
 const VERSION = '1.0.0';
 
@@ -39,6 +44,9 @@ OPTIONS:
   -w, --wait <ms>   Wait time for Mermaid rendering in ms (default: 2000)
                     Increase for complex diagrams
 
+  --prerender       Pre-render Mermaid diagrams to SVG before PDF generation
+                    Recommended for Gantt charts and complex diagrams
+
   --landscape       Use landscape orientation for PDF
 
   --keep-html       Keep intermediate HTML file (for md→pdf conversion)
@@ -72,6 +80,9 @@ EXAMPLES:
 
   # Complex diagrams with extra wait time
   pdfmaid architecture.md -w 5000
+
+  # Pre-render Gantt charts and complex diagrams (recommended)
+  pdfmaid roadmap.md --prerender
 
   # Keep HTML for debugging
   pdfmaid document.md --keep-html
@@ -136,6 +147,7 @@ let outputFile = null;
 let outputFormat = 'pdf'; // default
 let keepHtml = false;
 let formatExplicitlySet = false;
+let prerenderDiagrams = false;
 
 const mdOptions = {
   title: null,
@@ -143,6 +155,7 @@ const mdOptions = {
   includeStyles: true,
   includePrintButton: true,
   compactLevel: 0,
+  prerender: false,
 };
 
 const pdfOptions = {
@@ -203,6 +216,9 @@ for (let i = 0; i < args.length; i += 1) {
     i += 1;
   } else if (arg === '--landscape') {
     pdfOptions.landscape = true;
+  } else if (arg === '--prerender') {
+    prerenderDiagrams = true;
+    mdOptions.prerender = true;
   } else if (arg === '--keep-html') {
     keepHtml = true;
   } else if (arg === '--no-interactive') {
@@ -268,80 +284,107 @@ if (outputFormat === 'pdf' && !['.pdf'].includes(outputExt)) {
   outputFile += '.html';
 }
 
-// Main conversion logic
-try {
-  console.log('🧹 PDFMaid - Converting your documents...');
-  console.log(`   Input:  ${inputFile} (${isMarkdown ? 'Markdown' : 'HTML'})`);
-  console.log(`   Output: ${outputFile} (${outputFormat.toUpperCase()})`);
-  console.log('');
-
-  if (isMarkdown && outputFormat === 'html') {
-    // Markdown → HTML
-    console.log('📄 Converting Markdown to HTML...');
-    convertMarkdownFile(inputFile, outputFile, mdOptions);
-    console.log('   ✓ HTML created');
-    console.log('');
-    console.log('✅ Conversion complete!');
-    console.log(`   Location: ${outputFile}`);
-  } else if (isMarkdown && outputFormat === 'pdf') {
-    // Markdown → PDF (two-step)
-    mdOptions.includePrintButton = false; // No print button in PDF
-
-    // Check for Chrome first
-    if (!pdfOptions.chromePath) {
-      pdfOptions.chromePath = findChrome();
+// Main conversion logic (async to support pre-rendering)
+(async () => {
+  try {
+    console.log('🧹 PDFMaid - Converting your documents...');
+    console.log(
+      `   Input:  ${inputFile} (${isMarkdown ? 'Markdown' : 'HTML'})`,
+    );
+    console.log(`   Output: ${outputFile} (${outputFormat.toUpperCase()})`);
+    if (prerenderDiagrams) {
+      console.log('   Mode:   Pre-rendering Mermaid diagrams to SVG');
     }
-    if (!pdfOptions.chromePath) {
-      showChromeError();
+    console.log('');
+
+    if (isMarkdown && outputFormat === 'html') {
+      // Markdown → HTML
+      if (prerenderDiagrams) {
+        console.log(
+          '📄 Converting Markdown to HTML (pre-rendering diagrams)...',
+        );
+        await convertMarkdownFileAsync(inputFile, outputFile, mdOptions);
+      } else {
+        console.log('📄 Converting Markdown to HTML...');
+        convertMarkdownFile(inputFile, outputFile, mdOptions);
+      }
+      console.log('   ✓ HTML created');
+      console.log('');
+      console.log('✅ Conversion complete!');
+      console.log(`   Location: ${outputFile}`);
+    } else if (isMarkdown && outputFormat === 'pdf') {
+      // Markdown → PDF (two-step)
+      mdOptions.includePrintButton = false; // No print button in PDF
+
+      // Check for Chrome first
+      if (!pdfOptions.chromePath) {
+        pdfOptions.chromePath = findChrome();
+      }
+      if (!pdfOptions.chromePath) {
+        showChromeError();
+        process.exit(1);
+      }
+
+      const tempHtmlFile = keepHtml
+        ? inputFile.replace(/\.(md|markdown)$/i, '.html')
+        : path.join(os.tmpdir(), `pdfmaid-${Date.now()}.html`);
+
+      if (prerenderDiagrams) {
+        console.log(
+          '📄 Step 1/2: Converting Markdown to HTML (pre-rendering diagrams)...',
+        );
+        await convertMarkdownFileAsync(inputFile, tempHtmlFile, mdOptions);
+      } else {
+        console.log('📄 Step 1/2: Converting Markdown to HTML...');
+        convertMarkdownFile(inputFile, tempHtmlFile, mdOptions);
+      }
+      console.log('   ✓ HTML created');
+
+      console.log('📄 Step 2/2: Generating PDF...');
+      htmlToPdf(tempHtmlFile, outputFile, pdfOptions);
+      console.log('   ✓ PDF created');
+
+      // Clean up temp HTML
+      if (!keepHtml && fs.existsSync(tempHtmlFile)) {
+        fs.unlinkSync(tempHtmlFile);
+      }
+
+      console.log('');
+      console.log('✅ Conversion complete!');
+      console.log(`   Location: ${outputFile}`);
+      if (prerenderDiagrams) {
+        console.log('   📊 Mermaid diagrams pre-rendered at full resolution');
+      } else {
+        console.log('   📊 Mermaid diagrams have been rendered');
+      }
+      if (keepHtml) {
+        console.log(`   📄 HTML file saved: ${tempHtmlFile}`);
+      }
+    } else if (isHtml && outputFormat === 'pdf') {
+      // HTML → PDF
+      if (!pdfOptions.chromePath) {
+        pdfOptions.chromePath = findChrome();
+      }
+      if (!pdfOptions.chromePath) {
+        showChromeError();
+        process.exit(1);
+      }
+
+      console.log('📄 Converting HTML to PDF...');
+      htmlToPdf(inputFile, outputFile, pdfOptions);
+      console.log('   ✓ PDF created');
+      console.log('');
+      console.log('✅ Conversion complete!');
+      console.log(`   Location: ${outputFile}`);
+      console.log('   📊 Mermaid diagrams have been rendered');
+    } else if (isHtml && outputFormat === 'html') {
+      console.error(
+        'Error: Cannot convert HTML to HTML. Input is already HTML.',
+      );
       process.exit(1);
     }
-
-    const tempHtmlFile = keepHtml
-      ? inputFile.replace(/\.(md|markdown)$/i, '.html')
-      : path.join(os.tmpdir(), `pdfmaid-${Date.now()}.html`);
-
-    console.log('📄 Step 1/2: Converting Markdown to HTML...');
-    convertMarkdownFile(inputFile, tempHtmlFile, mdOptions);
-    console.log('   ✓ HTML created');
-
-    console.log('📄 Step 2/2: Generating PDF with rendered diagrams...');
-    htmlToPdf(tempHtmlFile, outputFile, pdfOptions);
-    console.log('   ✓ PDF created');
-
-    // Clean up temp HTML
-    if (!keepHtml && fs.existsSync(tempHtmlFile)) {
-      fs.unlinkSync(tempHtmlFile);
-    }
-
-    console.log('');
-    console.log('✅ Conversion complete!');
-    console.log(`   Location: ${outputFile}`);
-    console.log('   📊 Mermaid diagrams have been rendered');
-    if (keepHtml) {
-      console.log(`   📄 HTML file saved: ${tempHtmlFile}`);
-    }
-  } else if (isHtml && outputFormat === 'pdf') {
-    // HTML → PDF
-    if (!pdfOptions.chromePath) {
-      pdfOptions.chromePath = findChrome();
-    }
-    if (!pdfOptions.chromePath) {
-      showChromeError();
-      process.exit(1);
-    }
-
-    console.log('📄 Converting HTML to PDF...');
-    htmlToPdf(inputFile, outputFile, pdfOptions);
-    console.log('   ✓ PDF created');
-    console.log('');
-    console.log('✅ Conversion complete!');
-    console.log(`   Location: ${outputFile}`);
-    console.log('   📊 Mermaid diagrams have been rendered');
-  } else if (isHtml && outputFormat === 'html') {
-    console.error('Error: Cannot convert HTML to HTML. Input is already HTML.');
+  } catch (error) {
+    console.error('❌ Error:', error.message);
     process.exit(1);
   }
-} catch (error) {
-  console.error('❌ Error:', error.message);
-  process.exit(1);
-}
+})();

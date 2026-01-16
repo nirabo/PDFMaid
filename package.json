@@ -62,7 +62,8 @@
     "node": ">=14.0.0"
   },
   "dependencies": {
-    "marked": "^12.0.0"
+    "marked": "^12.0.0",
+    "puppeteer": "^21.0.0"
   },
   "devDependencies": {
     "eslint": "^8.57.1",
