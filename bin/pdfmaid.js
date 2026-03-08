@@ -8,6 +8,7 @@ const {
   convertMarkdownFileAsync,
   htmlToPdf,
   findChrome,
+  prerenderMermaidDiagrams,
 } = require('../lib');
 
 const VERSION = '1.0.0';
@@ -26,11 +27,14 @@ ARGUMENTS:
 
 OPTIONS:
   -o, --output <format|file>
-                    Output format ('pdf' or 'html') or output file path
+                    Output format ('pdf', 'html', or 'md') or output file path
                     Default: pdf
 
   -f, --format <format>
-                    Output format ('pdf' or 'html')
+                    Output format ('pdf', 'html', or 'md')
+                    'md' pre-renders Mermaid diagrams to inline SVG and
+                    outputs Markdown — useful as a pre-processing step
+                    for tools like Marp that don't support Mermaid natively
 
   -t, --title <text>
                     Set document title (default: derived from filename)
@@ -89,6 +93,10 @@ EXAMPLES:
 
   # Convert HTML to PDF
   pdfmaid document.html -o pdf
+
+  # Pre-render Mermaid diagrams and output Markdown (for Marp, etc.)
+  pdfmaid document.md -f md
+  pdfmaid document.md -o prerendered.md
 
   # Landscape PDF
   pdfmaid slides.md --landscape
@@ -170,7 +178,7 @@ for (let i = 0; i < args.length; i += 1) {
 
   if (arg === '--output' || arg === '-o') {
     const nextArg = args[i + 1];
-    if (nextArg === 'pdf' || nextArg === 'html') {
+    if (nextArg === 'pdf' || nextArg === 'html' || nextArg === 'md') {
       outputFormat = nextArg;
       formatExplicitlySet = true;
       i += 1;
@@ -185,12 +193,12 @@ for (let i = 0; i < args.length; i += 1) {
     }
   } else if (arg === '--format' || arg === '-f') {
     const format = args[i + 1];
-    if (format === 'pdf' || format === 'html') {
+    if (format === 'pdf' || format === 'html' || format === 'md') {
       outputFormat = format;
       formatExplicitlySet = true;
       i += 1;
     } else {
-      console.error(`Error: Invalid format '${format}'. Use 'pdf' or 'html'.`);
+      console.error(`Error: Invalid format '${format}'. Use 'pdf', 'html', or 'md'.`);
       process.exit(1);
     }
   } else if (arg === '--title' || arg === '-t') {
@@ -261,10 +269,18 @@ if (!isMarkdown && !isHtml) {
 // Determine output file if not specified
 if (!outputFile) {
   const baseName = path.basename(inputFile, path.extname(inputFile));
-  outputFile = path.join(
-    path.dirname(inputFile),
-    `${baseName}.${outputFormat}`,
-  );
+  if (outputFormat === 'md') {
+    // Avoid overwriting the input file
+    outputFile = path.join(
+      path.dirname(inputFile),
+      `${baseName}.prerendered.md`,
+    );
+  } else {
+    outputFile = path.join(
+      path.dirname(inputFile),
+      `${baseName}.${outputFormat}`,
+    );
+  }
 }
 
 // Infer output format from output file extension if not explicitly set
@@ -274,6 +290,8 @@ if (!formatExplicitlySet) {
     outputFormat = 'html';
   } else if (['.pdf'].includes(outputExt)) {
     outputFormat = 'pdf';
+  } else if (['.md', '.markdown'].includes(outputExt)) {
+    outputFormat = 'md';
   }
 }
 
@@ -282,6 +300,8 @@ if (outputFormat === 'pdf' && !['.pdf'].includes(outputExt)) {
   outputFile += '.pdf';
 } else if (outputFormat === 'html' && !['.html', '.htm'].includes(outputExt)) {
   outputFile += '.html';
+} else if (outputFormat === 'md' && !['.md', '.markdown'].includes(outputExt)) {
+  outputFile += '.md';
 }
 
 // Main conversion logic (async to support pre-rendering)
@@ -297,7 +317,19 @@ if (outputFormat === 'pdf' && !['.pdf'].includes(outputExt)) {
     }
     console.log('');
 
-    if (isMarkdown && outputFormat === 'html') {
+    if (isMarkdown && outputFormat === 'md') {
+      // Markdown → Markdown (pre-render Mermaid diagrams only)
+      console.log('📄 Pre-rendering Mermaid diagrams to inline SVG...');
+      const markdown = fs.readFileSync(inputFile, 'utf-8');
+      const result = await prerenderMermaidDiagrams(markdown, {
+        theme: mdOptions.theme,
+      });
+      fs.writeFileSync(outputFile, result, 'utf-8');
+      console.log('   ✓ Markdown with pre-rendered diagrams created');
+      console.log('');
+      console.log('✅ Pre-rendering complete!');
+      console.log(`   Location: ${outputFile}`);
+    } else if (isMarkdown && outputFormat === 'html') {
       // Markdown → HTML
       if (prerenderDiagrams) {
         console.log(
