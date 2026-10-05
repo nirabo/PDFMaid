@@ -77,6 +77,18 @@ describe('CLI End-to-End Tests', () => {
     expect(content).toContain("theme: 'dark'");
   });
 
+  it('should apply the paper theme with --theme paper', () => {
+    const inputFile = path.join(tempDir, 'test.md');
+    fs.writeFileSync(inputFile, '# Content');
+    const outputFile = path.join(tempDir, 'test.html');
+
+    execSync(`node ${cliPath} ${inputFile} -o ${outputFile} --theme paper`);
+
+    const content = fs.readFileSync(outputFile, 'utf8');
+    expect(content).toContain("theme: 'neutral'");
+    expect(content).toContain('Latin Modern Roman');
+  });
+
   it('should adjust compactness with --compact', () => {
     const inputFile = path.join(tempDir, 'test.md');
     fs.writeFileSync(inputFile, '# Content');

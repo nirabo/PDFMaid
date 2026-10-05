@@ -23,6 +23,7 @@ A powerful and easy-to-use CLI tool for converting Markdown documents to HTML an
   - Syntax-highlighted code blocks
   - Responsive tables
   - Dark mode support
+  - Compact, LaTeX-like "paper" layout
   - Print-optimized layouts
 
 - 🚀 **Easy to Use**
@@ -125,7 +126,7 @@ pdfmaid <input> [options]
 | `-o, --output <format\|file>` | Output format ('pdf' or 'html') or file path | pdf                   |
 | `-f, --format <format>`       | Output format ('pdf' or 'html')              | pdf                   |
 | `-t, --title <text>`          | Set document title                           | derived from filename |
-| `--theme <name>`              | Theme: 'default' or 'dark'                   | default               |
+| `--theme <name>`              | Theme: 'default', 'dark' or 'paper'          | default               |
 | `-w, --wait <ms>`             | Wait time for Mermaid rendering              | 2000                  |
 | `--landscape`                 | Use landscape orientation for PDF            | false                 |
 | `--keep-html`                 | Keep intermediate HTML file                  | false                 |
@@ -203,7 +204,7 @@ Convert Markdown string to HTML string.
 - `markdown` (string): Markdown content
 - `options` (object):
   - `title` (string): Document title
-  - `theme` (string): 'default' or 'dark'
+  - `theme` (string): 'default', 'dark' or 'paper'
   - `includeStyles` (boolean): Include built-in styles (default: true)
   - `includePrintButton` (boolean): Include print button (default: true)
 
@@ -338,6 +339,17 @@ Eye-friendly dark theme with syntax highlighting.
 
 ```bash
 pdfmaid document.md --theme dark
+```
+
+### Paper Theme
+
+A compact, LaTeX-like layout for technical and scientific documents: serif body
+text, numbered sections, booktabs-style tables, monochrome code blocks and page
+numbers. A leading `# Title` plus any `**Label:** value` lines right below it are
+rendered as a centered title block.
+
+```bash
+pdfmaid document.md --theme paper
 ```
 
 ## 🔍 Troubleshooting

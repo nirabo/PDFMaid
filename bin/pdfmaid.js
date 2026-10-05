@@ -39,7 +39,9 @@ OPTIONS:
   -t, --title <text>
                     Set document title (default: derived from filename)
 
-  --theme <name>    Theme: 'default' or 'dark' (default: 'default')
+  --theme <name>    Theme: 'default', 'dark' or 'paper' (default: 'default')
+                    'paper' is a compact, LaTeX-like layout: serif text,
+                    numbered sections, booktabs tables, page numbers
 
   -c, --compact <level>
                     Set compactness level from -5 (most compact) to 5 (most spacious).
@@ -76,6 +78,9 @@ EXAMPLES:
   # Custom title and dark theme
   pdfmaid document.md -t "API Docs" --theme dark
 
+  # A compact, LaTeX-like paper layout
+  pdfmaid document.md --theme paper
+
   # Make the layout more compact
   pdfmaid document.md --compact -3
 
@@ -105,7 +110,7 @@ SUPPORTED FEATURES:
   ✓ Full Mermaid.js diagram support (flowcharts, sequence, gantt, etc.)
   ✓ GitHub Flavored Markdown (GFM)
   ✓ Syntax-highlighted code blocks
-  ✓ Dark and light themes
+  ✓ Dark, light and paper themes
   ✓ Professional typography
   ✓ Print-optimized PDF output
   ✓ Interactive HTML features
@@ -198,7 +203,9 @@ for (let i = 0; i < args.length; i += 1) {
       formatExplicitlySet = true;
       i += 1;
     } else {
-      console.error(`Error: Invalid format '${format}'. Use 'pdf', 'html', or 'md'.`);
+      console.error(
+        `Error: Invalid format '${format}'. Use 'pdf', 'html', or 'md'.`,
+      );
       process.exit(1);
     }
   } else if (arg === '--title' || arg === '-t') {

@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- **Paper theme** (`--theme paper`): a compact, LaTeX-like layout for technical
+  and scientific documents. Serif body text, numbered sections, booktabs-style
+  tables, monochrome code blocks and page numbers. A leading `# Title` and any
+  `**Label:** value` lines below it become a centered title block.
+- Paper theme renders Mermaid diagrams with the neutral palette to match the
+  monochrome typography.
+
 ## [1.0.0] - 2025-10-25
 
 ### Added
