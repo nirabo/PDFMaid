@@ -5,9 +5,39 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [2.0.0] - 2026-11-02
+
+### Fixed
+
+- Images were missing from PDFs. The intermediate HTML was written to the temp
+  directory, so relative paths broke, and root-absolute paths (`/img/a.png`)
+  resolved against the filesystem root. Local images are now embedded as data
+  URIs and `static/`, `public/` and `assets/` directories are auto-detected.
 
 ### Added
+
+- `--asset-root`, `--strict`, `--keep-image-links`, `--out-dir`, `--page-size`,
+  `--margin`, `--no-sandbox`, `--quiet` and `--json`.
+- Several inputs per run, converted with one shared browser.
+- Warnings for failed image/network requests and diagrams that do not render.
+- Exit code `2` for usage errors.
+
+### Changed (breaking)
+
+- TypeScript, ESM-only, Node.js 20+. Argument parsing uses `node:util.parseArgs`;
+  unknown flags and invalid values are errors, `-o` is always a file and `-f`
+  is the format.
+- PDFs are produced with Puppeteer (`page.pdf`) instead of the Chrome command
+  line. `puppeteer-core` is used, so Chrome must be installed.
+- Mermaid is bundled (v11+) and rendered in the same browser session; the CDN is
+  only used by interactive HTML output.
+- The Chrome sandbox stays on unless `--no-sandbox` is given.
+- Removed `--prerender`, `--wait`, `--keep-html`, `--no-interactive`, the
+  positional output argument, and the `md-to-html`, `html-to-pdf` and
+  `md-to-pdf` commands. `smartypants` is no longer applied.
+- Removed CommonJS `lib/`; the public API moved to `pdfmaid` (ESM).
+
+### Paper theme (released in 2.0.0)
 
 - **Paper theme** (`--theme paper`): a compact, LaTeX-like layout for technical
   and scientific documents. Serif body text, numbered sections, booktabs-style

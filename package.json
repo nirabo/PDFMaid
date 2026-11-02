@@ -1,37 +1,34 @@
 {
   "name": "pdfmaid",
-  "version": "1.0.0",
-  "description": "PDFMaid - Your Markdown to PDF/HTML converter with beautiful Mermaid diagram rendering",
-  "main": "lib/index.js",
-  "bin": {
-    "pdfmaid": "./bin/pdfmaid.js",
-    "md-to-html": "./bin/md-to-html.js",
-    "html-to-pdf": "./bin/html-to-pdf.js",
-    "md-to-pdf": "./bin/md-to-pdf.js"
-  },
-  "scripts": {
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage",
-    "lint": "eslint .",
-    "format": "prettier --write ."
-  },
-  "jest": {
-    "testEnvironment": "node",
-    "testMatch": [
-      "**/test/**/*.test.js"
-    ],
-    "collectCoverageFrom": [
-      "lib/**/*.js",
-      "!lib/index.js"
-    ],
-    "coverageDirectory": "coverage",
-    "verbose": true,
-    "coverageThreshold": {
-      "global": {
-        "statements": 95
-      }
+  "version": "2.0.0",
+  "description": "Markdown to PDF/HTML converter with Mermaid diagrams and offline, self-contained output",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
     }
+  },
+  "bin": {
+    "pdfmaid": "./dist/cli.js"
+  },
+  "files": [
+    "dist/",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "check": "npm run lint && npm run typecheck && npm run build && npm run test:coverage",
+    "prepublishOnly": "npm run check"
   },
   "keywords": [
     "pdfmaid",
@@ -41,43 +38,35 @@
     "mermaid",
     "diagrams",
     "converter",
-    "documentation",
-    "flowchart",
-    "sequence-diagram",
-    "gantt",
-    "cli",
-    "markdown-to-pdf"
+    "cli"
   ],
   "author": "Lyuboslav Petrov <petrov.lyuboslav@gmail.com>",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/nirabo/pdfmaid.git"
+    "url": "git+https://github.com/nirabo/pdfmaid.git"
   },
   "bugs": {
     "url": "https://github.com/nirabo/pdfmaid/issues"
   },
   "homepage": "https://github.com/nirabo/pdfmaid#readme",
   "engines": {
-    "node": ">=14.0.0"
+    "node": ">=20.0.0"
   },
   "dependencies": {
-    "marked": "^12.0.0",
-    "puppeteer": "^21.0.0"
+    "marked": "^18.1.2",
+    "mermaid": "^12.2.0",
+    "puppeteer-core": "^25.16.0"
   },
   "devDependencies": {
-    "eslint": "^8.57.1",
-    "eslint-config-airbnb-base": "^15.0.0",
+    "@eslint/js": "^9.39.5",
+    "@types/node": "^26.6.6",
+    "@vitest/coverage-v8": "^5.0.5",
+    "eslint": "^9.39.5",
     "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-import": "^2.32.0",
-    "eslint-plugin-prettier": "^5.5.4",
-    "jest": "^27.0.0",
-    "prettier": "^3.7.4"
-  },
-  "files": [
-    "lib/",
-    "bin/",
-    "README.md",
-    "LICENSE"
-  ]
+    "prettier": "^3.9.10",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.72.1",
+    "vitest": "^5.0.5"
+  }
 }
