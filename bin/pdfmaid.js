@@ -55,6 +55,13 @@ OPTIONS:
 
   --landscape       Use landscape orientation for PDF
 
+  --asset-root <dir>
+                    Resolve root-absolute image paths ("/img/a.png") against
+                    <dir>; repeatable. static/, public/ and assets/ folders in
+                    the document's ancestors are detected automatically
+
+  --strict          Exit with an error if any image cannot be found
+
   --keep-html       Keep intermediate HTML file (for md→pdf conversion)
 
   --no-interactive  Disable interactive features (print/copy buttons)
@@ -161,6 +168,7 @@ let outputFormat = 'pdf'; // default
 let keepHtml = false;
 let formatExplicitlySet = false;
 let prerenderDiagrams = false;
+let strict = false;
 
 const mdOptions = {
   title: null,
@@ -169,6 +177,9 @@ const mdOptions = {
   includePrintButton: true,
   compactLevel: 0,
   prerender: false,
+  assetRoots: [],
+  unwrapImageLinks: true,
+  warnings: [],
 };
 
 const pdfOptions = {
@@ -234,6 +245,11 @@ for (let i = 0; i < args.length; i += 1) {
   } else if (arg === '--prerender') {
     prerenderDiagrams = true;
     mdOptions.prerender = true;
+  } else if (arg === '--asset-root') {
+    mdOptions.assetRoots.push(args[i + 1]);
+    i += 1;
+  } else if (arg === '--strict') {
+    strict = true;
   } else if (arg === '--keep-html') {
     keepHtml = true;
   } else if (arg === '--no-interactive') {
@@ -311,6 +327,14 @@ if (outputFormat === 'pdf' && !['.pdf'].includes(outputExt)) {
   outputFile += '.md';
 }
 
+function reportWarnings() {
+  mdOptions.warnings.forEach((w) => console.warn(`   ⚠ ${w}`));
+  if (strict && mdOptions.warnings.length > 0) {
+    console.error('❌ Error: missing images (--strict)');
+    process.exit(1);
+  }
+}
+
 // Main conversion logic (async to support pre-rendering)
 (async () => {
   try {
@@ -347,6 +371,7 @@ if (outputFormat === 'pdf' && !['.pdf'].includes(outputExt)) {
         console.log('📄 Converting Markdown to HTML...');
         convertMarkdownFile(inputFile, outputFile, mdOptions);
       }
+      reportWarnings();
       console.log('   ✓ HTML created');
       console.log('');
       console.log('✅ Conversion complete!');
@@ -377,6 +402,7 @@ if (outputFormat === 'pdf' && !['.pdf'].includes(outputExt)) {
         console.log('📄 Step 1/2: Converting Markdown to HTML...');
         convertMarkdownFile(inputFile, tempHtmlFile, mdOptions);
       }
+      reportWarnings();
       console.log('   ✓ HTML created');
 
       console.log('📄 Step 2/2: Generating PDF...');
