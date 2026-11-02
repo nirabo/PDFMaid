@@ -28,6 +28,7 @@
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "check": "npm run lint && npm run typecheck && npm run build && npm run test:coverage",
+    "prepare": "npm run build",
     "prepublishOnly": "npm run check"
   },
   "keywords": [
